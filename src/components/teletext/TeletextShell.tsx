@@ -36,29 +36,33 @@ export function TeletextHeader({
   );
 }
 
-type NavProps = { active: "inicio" | "jornada" };
+type NavProps = {
+  active: "inicio" | "jornada";
+  slug: string;
+};
 
-export function TeletextNav({ active }: NavProps) {
+export function TeletextNav({ active, slug }: NavProps) {
+  const base = `/s/${slug}`;
   return (
     <nav className="tve-nav" aria-label="Principal">
       <Link
-        href="/clasificacion"
+        href={`${base}/clasificacion`}
         className={`tve-nav-item ${active === "inicio" ? "tve-nav-item--active" : ""}`}
       >
         <span className="tve-nav-key tve-block--red" />
         <span className="tve-nav-text">Clasificación</span>
       </Link>
       <Link
-        href="/jornada"
+        href={`${base}/jornada`}
         className={`tve-nav-item ${active === "jornada" ? "tve-nav-item--active" : ""}`}
       >
         <span className="tve-nav-key tve-block--green" />
         <span className="tve-nav-text">Jornada</span>
       </Link>
-      <span className="tve-nav-item tve-nav-item--disabled" aria-disabled="true">
+      <Link href="/servidores" className="tve-nav-item">
         <span className="tve-nav-key tve-block--yellow" />
-        <span className="tve-nav-text">Cromos</span>
-      </span>
+        <span className="tve-nav-text">Servidores</span>
+      </Link>
       <LogoutButton />
     </nav>
   );

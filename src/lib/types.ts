@@ -25,3 +25,28 @@ export type StatsJornada = {
   jugados: number;
   pendientes: number;
 };
+
+export type ServidorResumen = {
+  liga_id: string;
+  slug: string;
+  nombre: string;
+  codigo_invite: string | null;
+  es_owner: boolean;
+  es_activa: boolean;
+  joined_at: string;
+};
+
+export type ServidorCreado = {
+  liga_id: string;
+  slug: string;
+  codigo_invite: string;
+  nombre: string;
+};
+
+export type LigaContexto = {
+  id: string;
+  slug: string;
+  nombre: string;
+  codigo_invite: string | null;
+  es_owner: boolean;
+};

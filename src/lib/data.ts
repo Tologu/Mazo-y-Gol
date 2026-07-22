@@ -20,7 +20,12 @@ const DEMO_PARTIDOS: PartidoCalendario[] = [
 
 export async function getPartidosJornada(
   jornada = 1,
+  ligaId?: string,
 ): Promise<{ partidos: PartidoCalendario[]; demo: boolean }> {
+  if (!ligaId || ligaId === "demo") {
+    return { partidos: DEMO_PARTIDOS, demo: true };
+  }
+
   const supabase = await createServerClient();
   if (!supabase) {
     return { partidos: DEMO_PARTIDOS, demo: true };
@@ -31,6 +36,7 @@ export async function getPartidosJornada(
     .select(
       "partido_id, jornada_numero, local, visitante, fecha_inicio, goles_local, goles_visitante, partido_estado, bloqueado",
     )
+    .eq("liga_id", ligaId)
     .eq("jornada_numero", jornada)
     .order("fecha_inicio");
 
@@ -41,26 +47,23 @@ export async function getPartidosJornada(
   return { partidos: data as PartidoCalendario[], demo: false };
 }
 
-export async function getClasificacion(): Promise<{
+export async function getClasificacion(
+  ligaId?: string,
+): Promise<{
   filas: FilaClasificacion[];
   demo: boolean;
 }> {
+  if (!ligaId || ligaId === "demo") {
+    return { filas: [], demo: true };
+  }
+
   const supabase = await createServerClient();
   if (!supabase) {
     return { filas: [], demo: true };
   }
 
-  const { data: liga } = await supabase
-    .from("ligas")
-    .select("id")
-    .eq("nombre", "La Liga Española")
-    .eq("temporada", "2026/27")
-    .single();
-
-  if (!liga) return { filas: [], demo: true };
-
   const { data, error } = await supabase.rpc("fn_clasificacion_porra", {
-    p_liga_id: liga.id,
+    p_liga_id: ligaId,
   });
 
   if (error || !data?.length) {
@@ -70,8 +73,11 @@ export async function getClasificacion(): Promise<{
   return { filas: data as FilaClasificacion[], demo: false };
 }
 
-export async function getStatsJornada(jornada = 1): Promise<StatsJornada> {
-  const { partidos } = await getPartidosJornada(jornada);
+export async function getStatsJornada(
+  jornada = 1,
+  ligaId?: string,
+): Promise<StatsJornada> {
+  const { partidos } = await getPartidosJornada(jornada, ligaId);
   const jugados = partidos.filter(
     (p) => p.goles_local !== null && p.goles_visitante !== null,
   ).length;

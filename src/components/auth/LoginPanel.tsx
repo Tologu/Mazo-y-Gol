@@ -12,7 +12,7 @@ type Props = {
 export function LoginPanel({ demo = false }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/clasificacion";
+  const next = searchParams.get("next") ?? "/entrar";
   const authError = searchParams.get("error");
 
   const [registerMode, setRegisterMode] = useState(false);
@@ -197,7 +197,7 @@ export function LoginPanel({ demo = false }: Props) {
         </div>
 
         {demo && (
-          <Link href="/clasificacion" className="intro-btn intro-btn--demo">
+          <Link href="/s/demo/clasificacion" className="intro-btn intro-btn--demo">
             Entrar en demo (sin login)
           </Link>
         )}

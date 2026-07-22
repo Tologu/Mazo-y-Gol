@@ -2,19 +2,28 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { CookieOptions } from "@supabase/ssr";
 
-const PROTECTED = ["/clasificacion", "/jornada"];
-
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  if (!PROTECTED.includes(path)) {
+  const isServerRoute = path.startsWith("/s/");
+  const isServidores = path === "/servidores" || path === "/entrar";
+
+  if (!isServerRoute && !isServidores) {
+    return NextResponse.next();
+  }
+
+  // Demo sin auth
+  if (path.startsWith("/s/demo")) {
     return NextResponse.next();
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
+    if (isServerRoute && !path.startsWith("/s/demo")) {
+      return NextResponse.redirect(new URL("/s/demo/clasificacion", request.url));
+    }
     return NextResponse.next();
   }
 
@@ -55,5 +64,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/clasificacion", "/jornada"],
+  matcher: ["/s/:path*", "/servidores", "/entrar", "/clasificacion", "/jornada"],
 };

@@ -8,6 +8,7 @@ Guía para agentes de IA que trabajen en este repositorio.
 
 - Puntuación: **exacto = 5 pts**, **signo 1X2 = 2 pts**, fallo = 0.
 - Las reglas de negocio de cromos y puntuación viven en **SQL/RPC de Supabase**, no en el cliente.
+- **Servidor = liga privada** (`ligas` + `liga_participantes`): se crea desde la home, se une con **código de invitación**, y tras login se entra al último servidor o al selector.
 - Objetivo del agente: implementar y mantener frontend + backend respetando dominio, RLS y la UI teletexto TVE.
 
 ## Stack
@@ -20,22 +21,24 @@ Guía para agentes de IA que trabajen en este repositorio.
 
 ```
 src/app/
-  page.tsx                 # Intro + login (/)
-  (porra)/                 # Rutas protegidas (layout con auth)
-    clasificacion/         # Clasificación
-    jornada/               # Calendario jornada
-  auth/callback/           # Callback OAuth/email
+  page.tsx                 # Intro + login + crear/unir servidor
+  entrar/                  # Redirect post-login → servidor activo o selector
+  servidores/              # Lista / selector de servidores del usuario
+  s/[slug]/               # Porra scoped al servidor
+    clasificacion/
+    jornada/
+  (porra)/                 # Redirects legacy → /entrar
+  auth/callback/
 src/components/
-  auth/                    # LoginPanel, IntroHero, LogoutButton
-  teletext/                # Shell, JornadaPanel, StandingsTable, etc.
+  auth/                    # LoginPanel, ServerActionsPanel, ServerPicker, …
+  teletext/
 src/lib/
-  data.ts                  # Lecturas + fallbacks demo
-  auth.ts                  # getSessionUser()
-  supabase/                # client (browser) + server (SSR cookies)
-  teletext-format.ts
-  types.ts
-src/middleware.ts          # Protege /clasificacion y /jornada si hay env
-supabase/migrations/       # Fuente de verdad del dominio (orden numérico)
+  data.ts                  # Lecturas por liga_id + fallbacks demo
+  servers.ts               # Resolver ligas (server)
+  servers-client.ts        # RPC crear/unir (browser)
+  auth.ts
+  supabase/
+supabase/migrations/       # Incluye 0012_servidores.sql
 ```
 
 Scripts útiles (`package.json`):
@@ -48,20 +51,24 @@ Scripts útiles (`package.json`):
 
 | Ruta | Rol |
 |------|-----|
-| `/` | Intro + login/registro |
-| `/clasificacion` | Clasificación (protegida si hay Supabase) |
-| `/jornada` | Partidos de la jornada (protegida) |
+| `/` | Intro + login/registro + crear/unir servidor |
+| `/entrar` | Resuelve destino tras sesión |
+| `/servidores` | Selector si hay varios servidores |
+| `/s/[slug]/clasificacion` | Clasificación del servidor |
+| `/s/[slug]/jornada` | Partidos del servidor |
+| `/s/demo/…` | Modo demo sin login |
 | `/auth/callback` | Confirmación de sesión |
 
-- Sin `.env.local` → **modo demo**: datos ficticios y acceso libre a porra.
-- Con env → middleware + layout redirigen a `/` si no hay sesión.
-- Variables: ver `.env.example` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`).
+- Sin `.env.local` → **modo demo** (`/s/demo/…`).
+- Con env → middleware exige sesión en `/s/*` (excepto demo), `/servidores`, `/entrar`.
+- RPCs: `crear_servidor`, `unirse_servidor`, `set_liga_activa`, `fn_mis_servidores` (migración `0012`).
+- Variables: ver `.env.example`.
 
 ## Convenciones de código
 
 - **Server Components por defecto.** `"use client"` solo para formularios, navegación interactiva o estado local.
 - TypeScript estricto; tipos de dominio en `src/lib/types.ts`.
-- Datos de lectura: `src/lib/data.ts` con fallback demo si no hay cliente o falla la query.
+- Datos de lectura: `src/lib/data.ts` filtrados por `liga_id`; fallback demo si no hay cliente o falla la query.
 - No inventar capas ni abstracciones “por si acaso”; reutilizar componentes teletext existentes.
 - **Código** (archivos, variables, componentes): inglés.
 - **UI, mensajes al usuario, docs de producto**: español.
@@ -82,10 +89,10 @@ Referencia viva: `src/app/globals.css` + componentes en `src/components/teletext
 
 - **Nunca** exponer `SUPABASE_SERVICE_ROLE_KEY` al cliente ni en commits.
 - Cliente browser: solo anon key (`createBrowserSupabaseClient`).
-- Escrituras sensibles (cromos, monedas, escrutinio): **solo vía RPC** `security definer`, no `INSERT`/`UPDATE` directos desde el cliente.
+- Escrituras sensibles (servidores, cromos, monedas, escrutinio): **solo vía RPC** `security definer`.
 - Respetar **RLS**; no añadir políticas “abiertas” para “que funcione”.
-- Errores de negocio de cromos: SQLSTATE personalizados (`PT401`, `PT403`, etc.) — mapearlos en API si aplica.
-- Antes de cambiar dominio (tablas, RPC, puntuación, cromos): **leer las migraciones** en `supabase/migrations/` en orden.
+- Errores de negocio: SQLSTATE personalizados (`PT401`, `PT403`, etc.).
+- Antes de cambiar dominio: **leer las migraciones** en orden.
 
 ### Reglas de oro (cromos) — no reimplementar en el cliente
 
@@ -109,16 +116,16 @@ La implementación canónica está en migraciones (`0004_rpc_usar_cromo.sql` y r
 
 1. Leer archivos y migraciones relevantes **antes** de editar.
 2. Cambios mínimos y alineados con patrones existentes.
-3. Tras cambios de dominio SQL: documentar orden de aplicación en Supabase SQL Editor / CLI.
+3. Tras cambios de dominio SQL: documentar orden de aplicación en Supabase SQL Editor / CLI (`0012_servidores.sql` si aún no está).
 4. Verificar con `npm run build` en cambios estructurales.
 5. Si pantalla blanca / `page.js` ENOENT / CSS raro: `npm run dev:clean` (borrar `.next`).
 6. Si hay varios `next` en puertos distintos, avisar: usar la URL que imprima la terminal.
 
 ## Pendientes (contexto, no TODO obligatorio)
 
-- Formulario de **pronósticos** en `/jornada` (guardar vía RPC / tabla `pronosticos`).
-- UI de **cromos** pausada (nav deshabilitada).
-- Confirmar grants frontend (`0011` o equivalente) si las lecturas desde anon fallan.
+- Formulario de **pronósticos** en `/s/[slug]/jornada`.
+- Envío del código de invitación por **email**.
+- UI de **cromos**.
 
 ## Respuesta al usuario
 
