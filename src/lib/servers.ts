@@ -1,13 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
-import type { LigaContexto, ServidorResumen } from "@/lib/types";
-
-const DEMO_SERVIDOR: LigaContexto = {
-  id: "demo",
-  slug: "demo",
-  nombre: "Servidor Demo",
-  codigo_invite: "DEMO-0000",
-  es_owner: true,
-};
+import type { BotJugador, LigaContexto, ServidorResumen } from "@/lib/types";
 
 export async function listMisServidores(): Promise<ServidorResumen[]> {
   const supabase = await createServerClient();
@@ -18,42 +10,21 @@ export async function listMisServidores(): Promise<ServidorResumen[]> {
   return data as ServidorResumen[];
 }
 
+/** Tras login siempre a la pestaña Servidores (elegir, crear o unirse). */
 export async function resolvePostLoginPath(): Promise<string> {
-  const servidores = await listMisServidores();
-  if (servidores.length === 0) {
-    return "/?msg=sin-servidor";
-  }
-
-  const activo = servidores.find((s) => s.es_activa);
-  if (activo?.slug) {
-    return `/s/${activo.slug}/clasificacion`;
-  }
-
-  if (servidores.length === 1 && servidores[0].slug) {
-    return `/s/${servidores[0].slug}/clasificacion`;
-  }
-
   return "/servidores";
 }
 
 export async function getLigaBySlug(
   slug: string,
-): Promise<{ liga: LigaContexto | null; demo: boolean }> {
-  if (slug === "demo") {
-    return { liga: DEMO_SERVIDOR, demo: true };
-  }
-
+): Promise<LigaContexto | null> {
   const supabase = await createServerClient();
-  if (!supabase) {
-    return { liga: DEMO_SERVIDOR, demo: true };
-  }
+  if (!supabase) return null;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    return { liga: null, demo: false };
-  }
+  if (!user) return null;
 
   const { data: liga, error } = await supabase
     .from("ligas")
@@ -63,9 +34,7 @@ export async function getLigaBySlug(
     .eq("activa", true)
     .maybeSingle();
 
-  if (error || !liga) {
-    return { liga: null, demo: false };
-  }
+  if (error || !liga) return null;
 
   const { data: inscrito } = await supabase
     .from("liga_participantes")
@@ -74,22 +43,42 @@ export async function getLigaBySlug(
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!inscrito) {
-    return { liga: null, demo: false };
-  }
+  if (!inscrito) return null;
 
   const esOwner = liga.owner_id === user.id;
 
   return {
-    liga: {
-      id: liga.id,
-      slug: liga.slug,
-      nombre: liga.nombre,
-      codigo_invite: esOwner ? liga.codigo_invite : null,
-      es_owner: esOwner,
-    },
-    demo: false,
+    id: liga.id,
+    slug: liga.slug,
+    nombre: liga.nombre,
+    codigo_invite: esOwner ? liga.codigo_invite : null,
+    es_owner: esOwner,
   };
+}
+
+export async function getBotsLiga(ligaId: string): Promise<BotJugador[]> {
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("liga_participantes")
+    .select("user_id, perfiles!inner(username, nombre, es_bot)")
+    .eq("liga_id", ligaId)
+    .eq("perfiles.es_bot", true);
+
+  if (error || !data) return [];
+
+  return data.map((row) => {
+    const perfil = row.perfiles as unknown as {
+      username: string;
+      nombre: string;
+    };
+    return {
+      user_id: row.user_id as string,
+      username: perfil.username,
+      nombre: perfil.nombre,
+    };
+  });
 }
 
 export async function setLigaActiva(ligaId: string): Promise<boolean> {

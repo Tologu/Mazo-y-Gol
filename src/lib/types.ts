@@ -10,13 +10,39 @@ export type PartidoCalendario = {
   bloqueado: boolean;
 };
 
+export type PronosticoPropio = {
+  partido_id: string;
+  goles_local: number;
+  goles_visitante: number;
+};
+
 export type FilaClasificacion = {
   posicion: number;
+  user_id: string;
   username: string;
   nombre: string;
   puntos: number;
   aciertos: number;
   aciertos_exactos: number;
+};
+
+export type FilaEquipo = {
+  equipo: string;
+  jugados: number;
+  ganados: number;
+  empatados: number;
+  perdidos: number;
+  goles_favor: number;
+  goles_contra: number;
+  puntos: number;
+};
+
+export type PronosticoAjeno = {
+  partido_id: string;
+  local: string;
+  visitante: string;
+  goles_local: number;
+  goles_visitante: number;
 };
 
 export type StatsJornada = {
@@ -49,4 +75,10 @@ export type LigaContexto = {
   nombre: string;
   codigo_invite: string | null;
   es_owner: boolean;
+};
+
+export type BotJugador = {
+  user_id: string;
+  username: string;
+  nombre: string;
 };

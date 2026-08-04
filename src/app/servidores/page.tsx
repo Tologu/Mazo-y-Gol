@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { IntroHero } from "@/components/auth/IntroHero";
+import { ServerActionsPanel } from "@/components/auth/ServerActionsPanel";
 import { ServerPicker } from "@/components/auth/ServerPicker";
 import { getSessionUser } from "@/lib/auth";
 import { listMisServidores } from "@/lib/servers";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ServidoresPage() {
   if (!hasSupabaseEnv()) {
-    redirect("/s/demo/clasificacion");
+    redirect("/");
   }
 
   const user = await getSessionUser();
@@ -24,12 +24,8 @@ export default async function ServidoresPage() {
     <div className="intro-screen">
       <div className="intro-page">
         <IntroHero />
-        <ServerPicker servidores={servidores} />
-        <p className="intro-note">
-          <Link href="/?msg=gestionar" className="tve-cyan">
-            ← Volver a inicio (crear / unirse)
-          </Link>
-        </p>
+        {servidores.length > 0 && <ServerPicker servidores={servidores} />}
+        <ServerActionsPanel />
         <footer className="intro-footer">
           <div className="tve-footer-bar">MAZO Y GOL . . . . 003</div>
         </footer>

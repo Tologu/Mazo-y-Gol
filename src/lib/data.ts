@@ -1,35 +1,19 @@
 import { createServerClient } from "@/lib/supabase/server";
 import type {
   FilaClasificacion,
+  FilaEquipo,
   PartidoCalendario,
-  StatsJornada,
+  PronosticoPropio,
 } from "@/lib/types";
-
-const DEMO_PARTIDOS: PartidoCalendario[] = [
-  { partido_id: "1", jornada_numero: 1, local: "Vitoria Albiazul", visitante: "Getafe Azulón", fecha_inicio: "2026-08-16T15:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "2", jornada_numero: 1, local: "Madrid Rayado", visitante: "Málaga Boquerón", fecha_inicio: "2026-08-26T19:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "3", jornada_numero: 1, local: "Vigo Celeste", visitante: "Pamplona Rojillo", fecha_inicio: "2026-08-16T17:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "4", jornada_numero: 1, local: "La Coruña Blanquiazul", visitante: "Elche Franjiverde", fecha_inicio: "2026-08-16T15:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "5", jornada_numero: 1, local: "Cornellá Periquito", visitante: "Valencia Granota", fecha_inicio: "2026-08-15T17:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "6", jornada_numero: 1, local: "Barcelona Azulgrana", visitante: "Bilbao Rojiblanco", fecha_inicio: "2026-08-26T19:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "7", jornada_numero: 1, local: "Santander Verdiblanco", visitante: "Villarreal Amarillo", fecha_inicio: "2026-08-16T19:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "8", jornada_numero: 1, local: "Madrid Blanco", visitante: "San Sebastián Txuri", fecha_inicio: "2026-08-26T21:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "9", jornada_numero: 1, local: "Sevilla Nervión", visitante: "Vallecas Franjirrojo", fecha_inicio: "2026-08-16T19:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-  { partido_id: "10", jornada_numero: 1, local: "Valencia Ché", visitante: "Sevilla Verdiblanco", fecha_inicio: "2026-08-16T21:00:00Z", goles_local: null, goles_visitante: null, partido_estado: "programado", bloqueado: false },
-];
 
 export async function getPartidosJornada(
   jornada = 1,
   ligaId?: string,
-): Promise<{ partidos: PartidoCalendario[]; demo: boolean }> {
-  if (!ligaId || ligaId === "demo") {
-    return { partidos: DEMO_PARTIDOS, demo: true };
-  }
+): Promise<PartidoCalendario[]> {
+  if (!ligaId) return [];
 
   const supabase = await createServerClient();
-  if (!supabase) {
-    return { partidos: DEMO_PARTIDOS, demo: true };
-  }
+  if (!supabase) return [];
 
   const { data, error } = await supabase
     .from("v_partidos_calendario")
@@ -40,53 +24,122 @@ export async function getPartidosJornada(
     .eq("jornada_numero", jornada)
     .order("fecha_inicio");
 
-  if (error || !data?.length) {
-    return { partidos: DEMO_PARTIDOS, demo: true };
-  }
-
-  return { partidos: data as PartidoCalendario[], demo: false };
+  if (error || !data) return [];
+  return data as PartidoCalendario[];
 }
 
 export async function getClasificacion(
   ligaId?: string,
-): Promise<{
-  filas: FilaClasificacion[];
-  demo: boolean;
-}> {
-  if (!ligaId || ligaId === "demo") {
-    return { filas: [], demo: true };
-  }
+): Promise<FilaClasificacion[]> {
+  if (!ligaId) return [];
 
   const supabase = await createServerClient();
-  if (!supabase) {
-    return { filas: [], demo: true };
-  }
+  if (!supabase) return [];
 
   const { data, error } = await supabase.rpc("fn_clasificacion_porra", {
     p_liga_id: ligaId,
   });
 
-  if (error || !data?.length) {
-    return { filas: [], demo: true };
-  }
-
-  return { filas: data as FilaClasificacion[], demo: false };
+  if (error || !data) return [];
+  return data as FilaClasificacion[];
 }
 
-export async function getStatsJornada(
-  jornada = 1,
+/** Clasificación de equipos calculada con los resultados oficiales registrados. */
+export async function getClasificacionEquipos(
   ligaId?: string,
-): Promise<StatsJornada> {
-  const { partidos } = await getPartidosJornada(jornada, ligaId);
-  const jugados = partidos.filter(
-    (p) => p.goles_local !== null && p.goles_visitante !== null,
-  ).length;
-  return {
-    jornada,
-    partidos: partidos.length,
-    jugados,
-    pendientes: partidos.length - jugados,
-  };
+): Promise<FilaEquipo[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const [equiposRes, partidosRes] = await Promise.all([
+    supabase.from("equipos").select("nombre").eq("liga_id", ligaId),
+    supabase
+      .from("v_partidos_calendario")
+      .select("local, visitante, goles_local, goles_visitante")
+      .eq("liga_id", ligaId)
+      .not("goles_local", "is", null)
+      .not("goles_visitante", "is", null),
+  ]);
+
+  if (equiposRes.error || !equiposRes.data) return [];
+
+  const tabla = new Map<string, FilaEquipo>();
+  for (const equipo of equiposRes.data) {
+    tabla.set(equipo.nombre, {
+      equipo: equipo.nombre,
+      jugados: 0,
+      ganados: 0,
+      empatados: 0,
+      perdidos: 0,
+      goles_favor: 0,
+      goles_contra: 0,
+      puntos: 0,
+    });
+  }
+
+  for (const partido of partidosRes.data ?? []) {
+    const local = tabla.get(partido.local as string);
+    const visitante = tabla.get(partido.visitante as string);
+    const golesLocal = partido.goles_local as number;
+    const golesVisitante = partido.goles_visitante as number;
+    if (!local || !visitante) continue;
+
+    local.jugados += 1;
+    visitante.jugados += 1;
+    local.goles_favor += golesLocal;
+    local.goles_contra += golesVisitante;
+    visitante.goles_favor += golesVisitante;
+    visitante.goles_contra += golesLocal;
+
+    if (golesLocal > golesVisitante) {
+      local.ganados += 1;
+      local.puntos += 3;
+      visitante.perdidos += 1;
+    } else if (golesLocal < golesVisitante) {
+      visitante.ganados += 1;
+      visitante.puntos += 3;
+      local.perdidos += 1;
+    } else {
+      local.empatados += 1;
+      visitante.empatados += 1;
+      local.puntos += 1;
+      visitante.puntos += 1;
+    }
+  }
+
+  return [...tabla.values()].sort(
+    (a, b) =>
+      b.puntos - a.puntos ||
+      b.goles_favor - b.goles_contra - (a.goles_favor - a.goles_contra) ||
+      b.goles_favor - a.goles_favor ||
+      a.equipo.localeCompare(b.equipo, "es"),
+  );
+}
+
+export async function getMisPronosticosJornada(
+  partidos: PartidoCalendario[],
+): Promise<PronosticoPropio[]> {
+  const partidoIds = partidos.map((partido) => partido.partido_id);
+  if (partidoIds.length === 0) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("pronosticos")
+    .select("partido_id, goles_local, goles_visitante")
+    .eq("user_id", user.id)
+    .in("partido_id", partidoIds);
+
+  if (error || !data) return [];
+  return data as PronosticoPropio[];
 }
 
 export function formatFecha(iso: string): string {

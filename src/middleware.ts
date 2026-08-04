@@ -13,18 +13,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Demo sin auth
-  if (path.startsWith("/s/demo")) {
-    return NextResponse.next();
-  }
-
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
-    if (isServerRoute && !path.startsWith("/s/demo")) {
-      return NextResponse.redirect(new URL("/s/demo/clasificacion", request.url));
-    }
-    return NextResponse.next();
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   let response = NextResponse.next({ request });

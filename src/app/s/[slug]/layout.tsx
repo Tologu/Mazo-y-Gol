@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
+import { syncPerfilDesdeAuth } from "@/lib/perfil";
 import { getLigaBySlug, setLigaActiva } from "@/lib/servers";
 import { hasSupabaseEnv } from "@/lib/supabase/server";
 
@@ -13,23 +14,23 @@ export default async function ServerLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const demoMode = !hasSupabaseEnv() || slug === "demo";
 
-  if (!demoMode) {
-    const user = await getSessionUser();
-    if (!user) {
-      redirect(`/?next=${encodeURIComponent(`/s/${slug}/clasificacion`)}`);
-    }
+  if (!hasSupabaseEnv()) {
+    redirect("/");
   }
 
-  const { liga } = await getLigaBySlug(slug);
+  const user = await getSessionUser();
+  if (!user) {
+    redirect(`/?next=${encodeURIComponent(`/s/${slug}/clasificacion`)}`);
+  }
+  await syncPerfilDesdeAuth();
+
+  const liga = await getLigaBySlug(slug);
   if (!liga) {
-    redirect("/?msg=sin-servidor");
+    redirect("/servidores");
   }
 
-  if (!demoMode && liga.id !== "demo") {
-    await setLigaActiva(liga.id);
-  }
+  await setLigaActiva(liga.id);
 
   return children;
 }

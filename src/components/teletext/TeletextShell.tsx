@@ -37,11 +37,12 @@ export function TeletextHeader({
 }
 
 type NavProps = {
-  active: "inicio" | "jornada";
+  active: "inicio" | "jornada" | "admin" | "cuenta";
   slug: string;
+  showAdmin?: boolean;
 };
 
-export function TeletextNav({ active, slug }: NavProps) {
+export function TeletextNav({ active, slug, showAdmin = false }: NavProps) {
   const base = `/s/${slug}`;
   return (
     <nav className="tve-nav" aria-label="Principal">
@@ -59,6 +60,22 @@ export function TeletextNav({ active, slug }: NavProps) {
         <span className="tve-nav-key tve-block--green" />
         <span className="tve-nav-text">Jornada</span>
       </Link>
+      {showAdmin && (
+        <Link
+          href={`${base}/admin`}
+          className={`tve-nav-item ${active === "admin" ? "tve-nav-item--active" : ""}`}
+        >
+          <span className="tve-nav-key tve-block--cyan" />
+          <span className="tve-nav-text">Admin</span>
+        </Link>
+      )}
+      <Link
+        href={`${base}/cuenta`}
+        className={`tve-nav-item ${active === "cuenta" ? "tve-nav-item--active" : ""}`}
+      >
+        <span className="tve-nav-key tve-block--blue" />
+        <span className="tve-nav-text">Mi Usuario</span>
+      </Link>
       <Link href="/servidores" className="tve-nav-item">
         <span className="tve-nav-key tve-block--yellow" />
         <span className="tve-nav-text">Servidores</span>
@@ -68,12 +85,9 @@ export function TeletextNav({ active, slug }: NavProps) {
   );
 }
 
-export function TeletextFooter({ demo, pagina = "888" }: { demo?: boolean; pagina?: string }) {
+export function TeletextFooter({ pagina = "888" }: { pagina?: string }) {
   return (
     <footer className="tve-footer">
-      {demo && (
-        <p className="tve-demo">MODO DEMO — configura .env.local</p>
-      )}
       <div className="tve-footer-bar">
         MAZO Y GOL . . . . {pagina}
       </div>

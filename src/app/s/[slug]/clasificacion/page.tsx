@@ -1,11 +1,9 @@
 import {
-  TeletextColHead,
   TeletextFooter,
   TeletextHeader,
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
 import { StandingsTable } from "@/components/teletext/StandingsTable";
-import { PointsChart } from "@/components/teletext/PointsChart";
 import { getClasificacion } from "@/lib/data";
 import { getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
@@ -18,10 +16,10 @@ export default async function ClasificacionPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { liga, demo: ligaDemo } = await getLigaBySlug(slug);
+  const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
 
-  const { filas, demo } = await getClasificacion(liga.id);
+  const filas = await getClasificacion(liga.id);
 
   return (
     <div className="tve-page-wrap">
@@ -38,16 +36,14 @@ export default async function ClasificacionPage({
           )}
 
           <section className="tve-section">
-            <StandingsTable filas={filas} />
+            <StandingsTable filas={filas} ligaId={liga.id} jornada={1} />
           </section>
 
           <section className="tve-section">
-            <TeletextColHead izq="Top puntos" der="Gráfico" />
-            <PointsChart filas={filas} />
-          </section>
-
-          <section className="tve-section">
-            <TeletextColHead izq="Reglas porra" der="P888" />
+            <div className="tve-colhead">
+              <span>Reglas porra</span>
+              <span>P888</span>
+            </div>
             <ul className="tve-rules tve-white">
               <li>
                 <span className="tve-yellow">Exacto</span> = 5 puntos
@@ -62,9 +58,9 @@ export default async function ClasificacionPage({
             </ul>
           </section>
         </main>
-        <TeletextFooter demo={demo || ligaDemo} pagina="201" />
+        <TeletextFooter pagina="201" />
       </div>
-      <TeletextNav active="inicio" slug={slug} />
+      <TeletextNav active="inicio" slug={slug} showAdmin={liga.es_owner} />
     </div>
   );
 }

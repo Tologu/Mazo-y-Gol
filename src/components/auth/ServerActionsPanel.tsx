@@ -7,12 +7,7 @@ import {
   unirseServidorClient,
 } from "@/lib/servers-client";
 
-type Props = {
-  demo?: boolean;
-  loggedIn?: boolean;
-};
-
-export function ServerActionsPanel({ demo = false, loggedIn = false }: Props) {
+export function ServerActionsPanel() {
   const router = useRouter();
   const [nombre, setNombre] = useState("");
   const [codigo, setCodigo] = useState("");
@@ -25,14 +20,6 @@ export function ServerActionsPanel({ demo = false, loggedIn = false }: Props) {
     setMessage(null);
     setInviteShown(null);
 
-    if (demo) {
-      setMessage("Configura .env.local para crear un servidor real.");
-      return;
-    }
-    if (!loggedIn) {
-      setMessage("Inicia sesión o regístrate antes de crear un servidor.");
-      return;
-    }
     if (nombre.trim().length < 3) {
       setMessage("El nombre debe tener al menos 3 caracteres.");
       return;
@@ -56,14 +43,6 @@ export function ServerActionsPanel({ demo = false, loggedIn = false }: Props) {
   async function handleJoin() {
     setMessage(null);
 
-    if (demo) {
-      setMessage("Configura .env.local para unirte a un servidor.");
-      return;
-    }
-    if (!loggedIn) {
-      setMessage("Inicia sesión o regístrate antes de unirte.");
-      return;
-    }
     if (!codigo.trim()) {
       setMessage("Introduce el código de invitación.");
       return;

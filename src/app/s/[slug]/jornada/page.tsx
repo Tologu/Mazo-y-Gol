@@ -5,7 +5,13 @@ import {
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
 import { JornadaPanel } from "@/components/teletext/JornadaPanel";
-import { getPartidosJornada } from "@/lib/data";
+import { TeamStandingsTable } from "@/components/teletext/TeamStandingsTable";
+import { MisPronosticosPanel } from "@/components/pronosticos/MisPronosticosPanel";
+import {
+  getClasificacionEquipos,
+  getMisPronosticosJornada,
+  getPartidosJornada,
+} from "@/lib/data";
 import { getLigaBySlug } from "@/lib/servers";
 import { formatFechaTeletext } from "@/lib/teletext-format";
 import { redirect } from "next/navigation";
@@ -18,10 +24,14 @@ export default async function JornadaPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { liga, demo: ligaDemo } = await getLigaBySlug(slug);
+  const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
 
-  const { partidos, demo } = await getPartidosJornada(1, liga.id);
+  const [partidos, equipos] = await Promise.all([
+    getPartidosJornada(1, liga.id),
+    getClasificacionEquipos(liga.id),
+  ]);
+  const pronosticos = await getMisPronosticosJornada(partidos);
   const fechaRef =
     partidos[0]?.fecha_inicio
       ? formatFechaTeletext(partidos[0].fecha_inicio)
@@ -46,15 +56,17 @@ export default async function JornadaPage({
           </section>
 
           <section className="tve-section tve-section--sub">
-            <TeletextColHead izq="Pronósticos" der="Próximo" />
-            <p className="tve-empty tve-green">
-              Pronósticos L/V — próximo paso
-            </p>
+            <TeamStandingsTable filas={equipos} />
+          </section>
+
+          <section className="tve-section tve-section--sub">
+            <TeletextColHead izq="Mis pronósticos" der="Jornada 1" />
+            <MisPronosticosPanel partidos={partidos} pronosticos={pronosticos} />
           </section>
         </main>
-        <TeletextFooter demo={demo || ligaDemo} pagina="209" />
+        <TeletextFooter pagina="209" />
       </div>
-      <TeletextNav active="jornada" slug={slug} />
+      <TeletextNav active="jornada" slug={slug} showAdmin={liga.es_owner} />
     </div>
   );
 }

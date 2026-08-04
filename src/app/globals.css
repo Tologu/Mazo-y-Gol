@@ -40,6 +40,7 @@ a {
 .tve-yellow { color: #ffff00; }
 .tve-green  { color: #00ff00; }
 .tve-red    { color: #ff0000; }
+.tve-orange { color: #ff7f00; }
 .tve-cyan   { color: #00ffff; }
 .tve-white  { color: #ffffff; }
 
@@ -172,6 +173,7 @@ a {
 
 .tve-block--yellow { background-color: #ffff00; }
 .tve-block--blue   { background-color: #0000ff; }
+.tve-block--cyan   { background-color: #00ffff; }
 
 .tve-titleline {
   display: flex;
@@ -257,6 +259,93 @@ a {
 
 .tve-row--rank {
   grid-template-columns: 28px 1fr auto auto;
+}
+
+/* Fila de clasificación pulsable (ver pronósticos del jugador) */
+.tve-row--clickable {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  width: 100%;
+  cursor: pointer;
+}
+
+.tve-row--clickable:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.tve-list > div:nth-child(even) > .tve-row--clickable {
+  background-color: #000022;
+  box-shadow: inset 0 1px 0 #000044;
+}
+
+.tve-list > div:nth-child(odd) > .tve-row--clickable {
+  box-shadow: inset 0 1px 0 #000033;
+}
+
+.tve-pron-detail {
+  border-left: 4px solid #00ffff;
+  margin: 2px 0 6px;
+  padding: 4px 6px;
+  background-color: #000022;
+}
+
+/* Desplegable clasificación de equipos */
+.tve-teams {
+  margin-top: 4px;
+}
+
+.tve-teams-summary {
+  cursor: pointer;
+  color: #00ffff;
+  background-color: #0000ff;
+  padding: 4px 8px;
+  font-size: 19px;
+  list-style: none;
+}
+
+.tve-teams-summary::before {
+  content: "▸ ";
+  color: #ffff00;
+}
+
+.tve-teams[open] > .tve-teams-summary::before {
+  content: "▾ ";
+}
+
+.tve-teams-table {
+  margin-top: 2px;
+}
+
+.tve-teams-row {
+  display: grid;
+  grid-template-columns: 24px 1fr repeat(6, 28px) 36px;
+  gap: 2px 4px;
+  align-items: center;
+  padding: 2px 6px;
+  font-size: 17px;
+  text-align: right;
+}
+
+.tve-teams-row > :nth-child(-n + 2) {
+  text-align: left;
+}
+
+.tve-teams-row--head {
+  color: #ffff00;
+  background-color: #000044;
+}
+
+.tve-teams-row:nth-child(even) {
+  background-color: #000022;
+}
+
+.tve-teams-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tve-rank-pos {
@@ -558,6 +647,55 @@ a {
   color: #666666;
 }
 
+.intro-field--password {
+  position: relative;
+}
+
+.intro-field--password input {
+  padding-right: 48px;
+}
+
+.intro-password-toggle {
+  appearance: none;
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #0000ff;
+  background-color: #000000;
+  color: #00ffff;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000033;
+}
+
+.intro-password-toggle:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.intro-link {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 16px;
+  color: #00ffff;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+}
+
+.intro-link--block {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+
 .intro-btn {
   appearance: none;
   display: block;
@@ -778,5 +916,202 @@ a {
 
   .tve-nav-item:hover:not(.tve-nav-item--disabled) {
     background-color: #0000ff;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Panel de simulación (admin del servidor)                            */
+/* ------------------------------------------------------------------ */
+
+.sim-add-bot {
+  display: flex;
+  gap: 8px;
+  padding: 8px 6px;
+}
+
+.sim-input-nombre {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  background-color: #000000;
+  border: 2px solid #0000ff;
+  color: #ffffff;
+  font: inherit;
+  font-size: 18px;
+  padding: 6px 8px;
+  min-height: 40px;
+  box-shadow: inset 2px 2px 0 #000033;
+}
+
+.sim-input-nombre:focus {
+  outline: none;
+  border-color: #00ff00;
+}
+
+.sim-btn {
+  width: auto;
+  flex-shrink: 0;
+  font-size: 18px;
+  padding: 8px 12px;
+  min-height: 40px;
+}
+
+.sim-bot-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-btn-delete,
+.sim-btn-save,
+.sim-btn-suspend {
+  appearance: none;
+  border: none;
+  font: inherit;
+  font-size: 16px;
+  padding: 4px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 #000033;
+}
+
+.sim-btn-delete {
+  background-color: #ff0000;
+  color: #ffffff;
+}
+
+.sim-btn-save {
+  background-color: #00ff00;
+  color: #0000ff;
+}
+
+.sim-btn-suspend {
+  background-color: #ffff00;
+  color: #ff0000;
+}
+
+.sim-btn-delete:disabled,
+.sim-btn-save:disabled,
+.sim-btn-suspend:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sim-btn-delete:active:not(:disabled),
+.sim-btn-save:active:not(:disabled),
+.sim-btn-suspend:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.sim-jornada-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 6px;
+  align-items: stretch;
+}
+
+.sim-select-jornada {
+  appearance: none;
+  background-color: #000000;
+  border: 2px solid #0000ff;
+  color: #ffff00;
+  font: inherit;
+  font-size: 18px;
+  padding: 6px 8px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.sim-result-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  border-bottom: 1px solid #000066;
+  font-size: 20px;
+}
+
+.sim-result-teams {
+  min-width: 0;
+}
+
+.sim-result-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-goal-input {
+  appearance: textfield;
+  width: 56px;
+  background-color: #000000;
+  border: 2px solid #0000ff;
+  color: #ffffff;
+  font: inherit;
+  font-size: 20px;
+  text-align: center;
+  padding: 4px;
+  min-height: 36px;
+}
+
+.sim-goal-input:focus {
+  outline: none;
+  border-color: #00ff00;
+}
+
+.sim-goal-input:disabled {
+  border-color: #666666;
+  color: #999999;
+}
+
+.prediction-list {
+  border-top: 1px solid #000066;
+}
+
+.prediction-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px 6px;
+  border-bottom: 1px solid #000066;
+}
+
+.prediction-teams {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  color: #ffffff;
+  font-size: 19px;
+}
+
+.prediction-teams span:last-child {
+  text-align: right;
+}
+
+.prediction-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .sim-result-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .prediction-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .prediction-teams {
+    flex: 1;
   }
 }

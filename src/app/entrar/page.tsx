@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 /** Resuelve a qué servidor enviar al usuario tras login. */
 export default async function EntrarPage() {
   if (!hasSupabaseEnv()) {
-    redirect("/s/demo/clasificacion");
+    redirect("/");
   }
 
   const user = await getSessionUser();
