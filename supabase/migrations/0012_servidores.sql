@@ -427,6 +427,7 @@ grant select on public.v_partidos_calendario to anon, authenticated;
 
 -- Lectura de ligas: solo plantilla, participantes o admin (oculta códigos ajenos)
 drop policy if exists ligas_select on public.ligas;
+drop policy if exists ligas_select_scoped on public.ligas;
 create policy ligas_select_scoped on public.ligas
   for select using (
     es_plantilla = true

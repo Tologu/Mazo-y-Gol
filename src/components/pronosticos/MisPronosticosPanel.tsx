@@ -99,15 +99,18 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
       <p className="tve-empty tve-cyan">
         Exacto = 5 puntos · Signo 1X2 = 2 puntos
       </p>
+      <p className="tve-empty tve-yellow">
+        Si un partido está suspendido, puedes guardar el pronóstico igualmente.
+      </p>
       {message && <p className="intro-msg">{message}</p>}
       <div className="prediction-list">
         {partidos.map((partido) => {
           const tieneResultado =
             partido.goles_local !== null && partido.goles_visitante !== null;
+          const suspendido = partido.partido_estado === "suspendido";
+          // Suspendido: se puede pronosticar aunque haya pasado la hora.
           const cerrado =
-            partido.bloqueado ||
-            tieneResultado ||
-            partido.partido_estado === "suspendido";
+            tieneResultado || (partido.bloqueado && !suspendido);
           const guardado = pronosticosPorPartido.has(partido.partido_id);
 
           return (
@@ -116,6 +119,9 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
                 <span>{partido.local}</span>
                 <span className="tve-cyan">vs</span>
                 <span>{partido.visitante}</span>
+                {suspendido && !tieneResultado && (
+                  <span className="tve-red"> · SUSPENDIDO</span>
+                )}
               </div>
               <div className="prediction-controls">
                 <input
@@ -159,13 +165,11 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
                 >
                   {savingId === partido.partido_id
                     ? "Guardando..."
-                    : partido.partido_estado === "suspendido"
-                      ? "Suspendido"
-                      : cerrado
-                        ? "Cerrado"
-                        : guardado
-                          ? "Actualizar"
-                          : "Guardar"}
+                    : cerrado
+                      ? "Cerrado"
+                      : guardado
+                        ? "Actualizar"
+                        : "Guardar"}
                 </button>
               </div>
             </div>
