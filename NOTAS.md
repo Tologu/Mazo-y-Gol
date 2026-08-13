@@ -117,6 +117,7 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 8. `0019_pronostico_partido_suspendido.sql`
 9. **`0020_reiniciar_resultados_jornada.sql`** — admin: borrar resultados+puntos de una jornada
 10. **`0021_jornadas_2_38_partidos.sql`** — calendario jornadas 2–38 + fecha única 12:00 Madrid + backfill
+11. **`0022_cierre_pronosticos_vie_mar.sql`** — cierre pronósticos: viernes 12:00 (finde) / martes 12:00 (J2, J6, J33)
 
 ---
 
