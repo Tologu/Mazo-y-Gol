@@ -6,11 +6,13 @@ import {
   crearServidorClient,
   unirseServidorClient,
 } from "@/lib/servers-client";
+import type { ModoJuego } from "@/lib/types";
 
 export function ServerActionsPanel() {
   const router = useRouter();
   const [nombre, setNombre] = useState("");
   const [codigo, setCodigo] = useState("");
+  const [modoJuego, setModoJuego] = useState<ModoJuego>("clasica");
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [loadingJoin, setLoadingJoin] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function ServerActionsPanel() {
     }
 
     setLoadingCreate(true);
-    const result = await crearServidorClient(nombre);
+    const result = await crearServidorClient(nombre, modoJuego);
     setLoadingCreate(false);
 
     if (!result.ok) {
@@ -83,6 +85,48 @@ export function ServerActionsPanel() {
             maxLength={60}
           />
         </label>
+
+        <fieldset className="modo-fieldset">
+          <legend className="intro-label tve-green">Modo de juego</legend>
+          <label className="modo-option">
+            <input
+              type="radio"
+              name="modo_juego"
+              value="clasica"
+              checked={modoJuego === "clasica"}
+              onChange={() => setModoJuego("clasica")}
+            />
+            <span>
+              <span className="tve-yellow">Porra Clásica</span>
+              <span className="modo-option-desc tve-white">
+                {" "}
+                — solo suma de puntos
+              </span>
+            </span>
+          </label>
+          <label className="modo-option">
+            <input
+              type="radio"
+              name="modo_juego"
+              value="mazo_y_gol"
+              checked={modoJuego === "mazo_y_gol"}
+              onChange={() => setModoJuego("mazo_y_gol")}
+            />
+            <span>
+              <span className="tve-cyan">Mazo y Gol</span>
+              <span className="modo-option-desc tve-white">
+                {" "}
+                — porra con cromos
+              </span>
+            </span>
+          </label>
+          {modoJuego === "mazo_y_gol" && (
+            <p className="intro-note tve-yellow">
+              Cromos próximamente en la app. El modo queda reservado para cuando
+              estén activos.
+            </p>
+          )}
+        </fieldset>
 
         <button
           type="button"

@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { guardarPronosticoClient } from "@/lib/pronosticos-client";
+import { estadoVentanaPronosticos } from "@/lib/timelock";
 import type {
   PartidoCalendario,
   PronosticoPropio,
@@ -39,6 +40,21 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
   );
   const [savingId, setSavingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setTick((n) => n + 1), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  void tick;
+  const fechaInicioJornada = partidos[0]?.fecha_inicio;
+  const fechaAperturaJornada = partidos[0]?.fecha_apertura;
+  const ventana = fechaInicioJornada
+    ? estadoVentanaPronosticos(fechaInicioJornada, fechaAperturaJornada)
+    : "cerrada";
+  const jornadaNoAbierta = ventana === "no_abierta";
+  const jornadaNumero = partidos[0]?.jornada_numero ?? 1;
 
   function setMarcador(
     partidoId: string,
@@ -99,18 +115,30 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
       <p className="tve-empty tve-cyan">
         Exacto = 5 puntos · Signo 1X2 = 2 puntos
       </p>
-      <p className="tve-empty tve-yellow">
-        Si un partido está suspendido, puedes guardar el pronóstico igualmente.
-      </p>
+      {jornadaNoAbierta ? (
+        <p className="tve-empty tve-yellow">
+          Los pronósticos de la jornada {jornadaNumero} se abren al cerrar la
+          jornada {jornadaNumero - 1}.
+        </p>
+      ) : (
+        <p className="tve-empty tve-yellow">
+          Si un partido está suspendido, puedes guardar el pronóstico
+          igualmente.
+        </p>
+      )}
       {message && <p className="intro-msg">{message}</p>}
       <div className="prediction-list">
         {partidos.map((partido) => {
           const tieneResultado =
             partido.goles_local !== null && partido.goles_visitante !== null;
           const suspendido = partido.partido_estado === "suspendido";
-          // Suspendido: se puede pronosticar aunque haya pasado la hora.
+          // Suspendido: se puede pronosticar aunque haya pasado la hora,
+          // pero no si la jornada todavía no se ha abierto.
           const cerrado =
-            tieneResultado || (partido.bloqueado && !suspendido);
+            jornadaNoAbierta ||
+            tieneResultado ||
+            (partido.bloqueado && !suspendido) ||
+            ventana === "cerrada";
           const guardado = pronosticosPorPartido.has(partido.partido_id);
 
           return (
@@ -165,11 +193,13 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
                 >
                   {savingId === partido.partido_id
                     ? "Guardando..."
-                    : cerrado
-                      ? "Cerrado"
-                      : guardado
-                        ? "Actualizar"
-                        : "Guardar"}
+                    : jornadaNoAbierta
+                      ? "Aún no"
+                      : cerrado
+                        ? "Cerrado"
+                        : guardado
+                          ? "Actualizar"
+                          : "Guardar"}
                 </button>
               </div>
             </div>

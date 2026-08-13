@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { setLigaActivaClient } from "@/lib/servers-client";
 import type { ServidorResumen } from "@/lib/types";
 
@@ -53,7 +54,18 @@ export function ServerPicker({ servidores }: Props) {
                     disabled={loadingId === s.liga_id}
                     onClick={() => enterServer(s.liga_id, s.slug)}
                   >
-                    <span className="tve-rank-name">{s.nombre}</span>
+                    <span className="tve-rank-name">
+                      {s.nombre}{" "}
+                      <span
+                        className={
+                          s.modo_juego === "mazo_y_gol"
+                            ? "tve-cyan"
+                            : "tve-yellow"
+                        }
+                      >
+                        [{etiquetaModoJuego(s.modo_juego)}]
+                      </span>
+                    </span>
                     <span className="tve-rank-sub">
                       {s.es_activa ? "activo · " : ""}
                       {s.es_owner ? "owner" : "miembro"}

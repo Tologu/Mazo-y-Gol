@@ -1,3 +1,5 @@
+import { IntroTitleBounce } from "@/components/auth/IntroTitleBounce";
+
 export function IntroHero() {
   return (
     <header className="intro-hero">
@@ -15,14 +17,10 @@ export function IntroHero() {
 ╚══════════════════════════════╝`}
       </pre>
 
-      <h1 className="intro-title">
-        <span className="tve-yellow">MAZO</span>
-        <span className="intro-title-sep tve-white"> Y </span>
-        <span className="tve-green">GOL</span>
-      </h1>
+      <IntroTitleBounce />
 
       <p className="intro-tagline tve-cyan">
-        Porra · Cromos · La Liga 26/27
+        Porra clásica o Mazo y Gol · La Liga 26/27
       </p>
 
       <ul className="intro-features">

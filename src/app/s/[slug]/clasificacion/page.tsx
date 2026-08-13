@@ -6,6 +6,7 @@ import {
 import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { StandingsTable } from "@/components/teletext/StandingsTable";
 import { getClasificacion } from "@/lib/data";
+import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
 
@@ -43,6 +44,7 @@ export default async function ClasificacionPage({
           seccion={liga.nombre.toUpperCase()}
           jornada={jornada}
           pagina="201"
+          modo={etiquetaModoJuego(liga.modo_juego)}
         />
         <main className="tve-main">
           {liga.codigo_invite && (

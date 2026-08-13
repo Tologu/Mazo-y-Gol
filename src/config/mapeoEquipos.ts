@@ -27,7 +27,7 @@ export const MAPEO_EQUIPOS = {
   },
   "Atlético de Madrid": {
     tag: "MAD",
-    nombreWeb: "Madrid Rayado",
+    nombreWeb: "Rojiblanco Madrid",
     colorPrimario: "Rojo",
     colorSecundario: "Blanco",
   },
@@ -69,13 +69,13 @@ export const MAPEO_EQUIPOS = {
   },
   "Levante U. D.": {
     tag: "LEV",
-    nombreWeb: "Valencia Granota",
+    nombreWeb: "Levante Granota",
     colorPrimario: "Azul",
     colorSecundario: "Magenta",
   },
   "Málaga C. F.": {
     tag: "MGA",
-    nombreWeb: "Málaga Boquerón",
+    nombreWeb: "Málaga Blanquiazul",
     colorPrimario: "Cian",
     colorSecundario: "Blanco",
   },

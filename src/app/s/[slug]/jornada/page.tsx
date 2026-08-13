@@ -4,6 +4,7 @@ import {
   TeletextHeader,
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
+import { JornadaCountdown } from "@/components/teletext/JornadaCountdown";
 import { JornadaPanel } from "@/components/teletext/JornadaPanel";
 import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { TeamStandingsTable } from "@/components/teletext/TeamStandingsTable";
@@ -13,6 +14,7 @@ import {
   getMisPronosticosJornada,
   getPartidosJornada,
 } from "@/lib/data";
+import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { getLigaBySlug } from "@/lib/servers";
 import { formatFechaTeletext } from "@/lib/teletext-format";
 import { redirect } from "next/navigation";
@@ -47,10 +49,9 @@ export default async function JornadaPage({
     getClasificacionEquipos(liga.id),
   ]);
   const pronosticos = await getMisPronosticosJornada(partidos);
-  const fechaRef =
-    partidos[0]?.fecha_inicio
-      ? formatFechaTeletext(partidos[0].fecha_inicio)
-      : undefined;
+  const fechaCierre = partidos[0]?.fecha_inicio;
+  const fechaApertura = partidos[0]?.fecha_apertura;
+  const fechaRef = fechaCierre ? formatFechaTeletext(fechaCierre) : undefined;
 
   return (
     <div className="tve-page-wrap">
@@ -60,6 +61,7 @@ export default async function JornadaPage({
           jornada={jornada}
           fecha={fechaRef}
           pagina="209"
+          modo={etiquetaModoJuego(liga.modo_juego)}
         />
         <main className="tve-main">
           <section className="tve-section">
@@ -72,6 +74,11 @@ export default async function JornadaPage({
               basePath="jornada"
               jornada={jornada}
               totalJornadas={TOTAL_JORNADAS}
+            />
+            <JornadaCountdown
+              fechaInicio={fechaCierre}
+              fechaApertura={fechaApertura}
+              jornada={jornada}
             />
             <JornadaPanel partidos={partidos} />
           </section>

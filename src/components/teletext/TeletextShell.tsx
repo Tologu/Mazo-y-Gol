@@ -6,6 +6,8 @@ type HeaderProps = {
   jornada?: number;
   fecha?: string;
   pagina?: string;
+  /** Etiqueta de modo (ej. PORRA CLASICA / MAZO Y GOL) */
+  modo?: string;
 };
 
 export function TeletextHeader({
@@ -13,6 +15,7 @@ export function TeletextHeader({
   jornada,
   fecha,
   pagina,
+  modo,
 }: HeaderProps) {
   return (
     <header className="tve-header">
@@ -24,8 +27,9 @@ export function TeletextHeader({
         {pagina && <span className="tve-page-num">P{pagina}</span>}
       </div>
 
-      {(jornada !== undefined || fecha) && (
+      {(jornada !== undefined || fecha || modo) && (
         <div className="tve-titleline">
+          {modo && <span className="tve-cyan">{modo}</span>}
           {jornada !== undefined && (
             <span className="tve-yellow">JORNADA {jornada}</span>
           )}

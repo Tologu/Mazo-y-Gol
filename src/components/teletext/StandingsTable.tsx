@@ -99,14 +99,14 @@ export function StandingsTable({ filas, ligaId, jornada }: Props) {
                   {lista.length === 0 ? (
                     <p className="tve-empty tve-yellow">Sin pronósticos.</p>
                   ) : (
-                    <ul className="tve-rules tve-white">
+                    <ul className="tve-pron-list">
                       {lista.map((p) => (
-                        <li key={p.partido_id}>
-                          {p.local}{" "}
-                          <span className="tve-yellow">
+                        <li key={p.partido_id} className="tve-pron-item">
+                          <span className="tve-pron-local">{p.local}</span>
+                          <span className="tve-pron-score tve-yellow">
                             {p.goles_local}-{p.goles_visitante}
-                          </span>{" "}
-                          {p.visitante}
+                          </span>
+                          <span className="tve-pron-away">{p.visitante}</span>
                         </li>
                       ))}
                     </ul>

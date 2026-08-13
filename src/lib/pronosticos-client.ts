@@ -17,6 +17,9 @@ function mapError(error: { message?: string } | null): string {
   if (message.includes("time_lock")) {
     return "El partido ya está bloqueado para pronósticos.";
   }
+  if (message.includes("jornada_no_abierta")) {
+    return "Esta jornada se abre cuando cierre la anterior.";
+  }
   if (message.includes("partido_cerrado")) {
     return "El partido ya tiene resultado y no admite pronósticos.";
   }

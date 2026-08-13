@@ -28,6 +28,8 @@ export function LoginPanel({ demo = false }: Props) {
   const [message, setMessage] = useState<string | null>(
     authError === "caducado"
       ? "El enlace del correo ha caducado o ya se usó. Solicita uno nuevo con «¿Olvidaste tu contraseña?»."
+      : authError === "sesion"
+        ? "La sesión ha caducado (8 horas). Vuelve a iniciar sesión."
       : authError === "verificador"
         ? "El enlace se abrió sin el verificador de seguridad. Solicita uno nuevo desde este navegador."
       : authError === "auth"

@@ -1,3 +1,4 @@
+import { sessionHasExpired } from "@/lib/session";
 import { createServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 
 export async function getSessionUser() {
@@ -12,7 +13,13 @@ export async function getSessionUser() {
       error,
     } = await supabase.auth.getUser();
 
-    if (error) return null;
+    if (error || !user) return null;
+
+    if (sessionHasExpired(user.last_sign_in_at)) {
+      await supabase.auth.signOut();
+      return null;
+    }
+
     return user;
   } catch {
     return null;

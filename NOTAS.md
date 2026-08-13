@@ -118,6 +118,17 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 9. **`0020_reiniciar_resultados_jornada.sql`** — admin: borrar resultados+puntos de una jornada
 10. **`0021_jornadas_2_38_partidos.sql`** — calendario jornadas 2–38 + fecha única 12:00 Madrid + backfill
 11. **`0022_cierre_pronosticos_vie_mar.sql`** — cierre pronósticos: viernes 12:00 (finde) / martes 12:00 (J2, J6, J33)
+12. **`0023_modo_juego.sql`** — modos `clasica` | `mazo_y_gol` al crear servidor; gate `usar_cromo`
+13. **`0024_apertura_secuencial_jornadas.sql`** — jornada N se abre al cerrar la N-1; solo una abierta a la vez
+14. **`0025_renombrar_equipos.sql`** — Levante Granota, Málaga Blanquiazul, Rojiblanco Madrid
+
+---
+
+## Sesión (login)
+
+- La sesión caduca **8 horas** después del último inicio de sesión (`last_sign_in_at`).
+- Lo aplica el middleware en rutas protegidas y `getSessionUser`.
+- En el plan Pro de Supabase se puede duplicar en Auth → Sessions → Time-box (28800 s).
 
 ---
 

@@ -4,10 +4,13 @@ export type PartidoCalendario = {
   local: string;
   visitante: string;
   fecha_inicio: string;
+  /** Cierre de la jornada anterior. Null = jornada 1 (sin espera). */
+  fecha_apertura: string | null;
   goles_local: number | null;
   goles_visitante: number | null;
   partido_estado: string;
   bloqueado: boolean;
+  abierta: boolean;
 };
 
 export type PronosticoPropio = {
@@ -52,6 +55,8 @@ export type StatsJornada = {
   pendientes: number;
 };
 
+export type ModoJuego = "clasica" | "mazo_y_gol";
+
 export type ServidorResumen = {
   liga_id: string;
   slug: string;
@@ -60,6 +65,7 @@ export type ServidorResumen = {
   es_owner: boolean;
   es_activa: boolean;
   joined_at: string;
+  modo_juego: ModoJuego;
 };
 
 export type ServidorCreado = {
@@ -67,6 +73,7 @@ export type ServidorCreado = {
   slug: string;
   codigo_invite: string;
   nombre: string;
+  modo_juego: ModoJuego;
 };
 
 export type LigaContexto = {
@@ -75,6 +82,7 @@ export type LigaContexto = {
   nombre: string;
   codigo_invite: string | null;
   es_owner: boolean;
+  modo_juego: ModoJuego;
 };
 
 export type BotJugador = {

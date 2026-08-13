@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { CookieOptions } from "@supabase/ssr";
+import { sessionHasExpired } from "@/lib/session";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
@@ -42,6 +43,17 @@ export async function middleware(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    if (user && sessionHasExpired(user.last_sign_in_at)) {
+      await supabase.auth.signOut();
+      const loginUrl = new URL("/", request.url);
+      loginUrl.searchParams.set("error", "sesion");
+      const redirect = NextResponse.redirect(loginUrl);
+      response.cookies.getAll().forEach((cookie) => {
+        redirect.cookies.set(cookie);
+      });
+      return redirect;
+    }
 
     if (!user) {
       const loginUrl = new URL("/", request.url);
