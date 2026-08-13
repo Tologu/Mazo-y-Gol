@@ -1,39 +1,77 @@
-# Next.js
-.next/
-out/
+# =============================================================================
+# Seguridad — no subir credenciales ni datos sensibles
+# https://codigonautas.com/que-no-subir-a-github/
+# =============================================================================
+.env
+.env.*
+!.env.example
 
-# Dependencias
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+*.p12
+*.pfx
+
+credentials.csv
+google-service-account.json
+.aws/
+.azure/
+.gcloud/
+
+*.tfstate
+*.tfstate.*
+
+dump.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# =============================================================================
+# Dependencias y artefactos de compilación
+# =============================================================================
 node_modules/
 .pnp
 .pnp.js
 
-# Next.js
 .next/
 out/
 build/
 dist/
+.turbo
+.vercel
 
-# Entorno — NUNCA subir credenciales
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Supabase
-supabase/.temp/
-.branches/
-
+# =============================================================================
 # Logs y caché
+# =============================================================================
 *.log
 npm-debug.log*
-.DS_Store
-Thumbs.db
-.vercel
-.turbo
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 *.tsbuildinfo
 
-# IDE
+# =============================================================================
+# Sistema operativo e IDE
+# =============================================================================
+.DS_Store
+Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+.cursor/
+
+# =============================================================================
+# Supabase CLI (local)
+# =============================================================================
+supabase/.temp/
+supabase/.branches/
+.branches/
+
+# =============================================================================
+# Python (scripts auxiliares)
+# =============================================================================
+__pycache__/
+*.pyc
+venv/
+.venv/

@@ -132,6 +132,19 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 
 ---
 
+## Seguridad en Git / GitHub
+
+Checklist (`.gitignore` + Vercel):
+
+- **Nunca** commitear `.env`, `.env.local` ni claves reales (solo `.env.example` con valores vacíos).
+- **Nunca** subir `SUPABASE_SERVICE_ROLE_KEY` al cliente (`NEXT_PUBLIC_*`).
+- Ignorados: `node_modules/`, `.next/`, logs, dumps SQL, claves PEM/SSH, credenciales cloud.
+- Si alguna clave llegó a GitHub: **rotarla en Supabase/Vercel** y limpiar historial (no basta con borrar el archivo).
+
+Historial actual: solo `.env.example` (plantilla) está versionado; `.env.local` no.
+
+---
+
 ## Pendiente / pospuesto
 
 - Recuperación de contraseña por email (PKCE, redirect, rate limit Supabase).
