@@ -563,6 +563,10 @@ a {
   margin-bottom: 16px;
 }
 
+.intro-hero .intro-title {
+  margin-top: 22px;
+}
+
 .intro-ascii {
   margin: 0 0 8px;
   font-size: 14px;

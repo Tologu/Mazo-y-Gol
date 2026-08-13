@@ -7,15 +7,9 @@ export function IntroHero() {
         <span className="tve-block tve-block--red" aria-hidden="true" />
         <span className="tve-block tve-block--logo">myg</span>
         <span className="tve-block tve-block--green" aria-hidden="true" />
-        <span className="tve-block tve-block--title">MAZO Y GOL</span>
+        <span className="tve-block tve-block--title">LA LIGA 26/27</span>
         <span className="tve-page-num">P001</span>
       </div>
-
-      <pre className="intro-ascii tve-cyan" aria-hidden="true">
-{`╔══════════════════════════════╗
-║  MAZO  ·  Y  ·  GOL          ║
-╚══════════════════════════════╝`}
-      </pre>
 
       <IntroTitleBounce />
 
