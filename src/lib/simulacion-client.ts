@@ -118,3 +118,19 @@ export async function suspenderPartidoClient(
   if (error) return { ok: false, error: mapRpcError(error) };
   return { ok: true, data: null };
 }
+
+export async function reiniciarResultadosJornadaClient(
+  ligaId: string,
+  jornadaNumero: number,
+): Promise<RpcResult<number>> {
+  const supabase = createBrowserSupabaseClient();
+  if (!supabase) return { ok: false, error: "Supabase no configurado." };
+
+  const { data, error } = await supabase.rpc("reiniciar_resultados_jornada", {
+    p_liga_id: ligaId,
+    p_jornada_numero: jornadaNumero,
+  });
+
+  if (error) return { ok: false, error: mapRpcError(error) };
+  return { ok: true, data: (data as number) ?? 0 };
+}

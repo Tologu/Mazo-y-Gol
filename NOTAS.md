@@ -114,6 +114,9 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 5. `0016_clasificacion_solo_nombre.sql`
 6. `0017_pronosticos_ajenos.sql` (opcional si aplicas 0018)
 7. **`0018_pronosticos_cerrados_suspender.sql`** — completitud con partidos cerrados + suspender
+8. `0019_pronostico_partido_suspendido.sql`
+9. **`0020_reiniciar_resultados_jornada.sql`** — admin: borrar resultados+puntos de una jornada
+10. **`0021_jornadas_2_38_partidos.sql`** — calendario jornadas 2–38 + fecha única 12:00 Madrid + backfill
 
 ---
 
@@ -121,9 +124,7 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 
 - Recuperación de contraseña por email (PKCE, redirect, rate limit Supabase).
 - UI de **cromos**.
-- Formulario de pronósticos ya existe en Jornada; revisar jornadas > 1 si se amplía navegación.
 - Envío de código de invitación por email.
-- Botón «reiniciar jornada» (mencionado; no implementado aún).
 
 ---
 
@@ -133,9 +134,9 @@ Apuntes de solicitudes de producto y cambios acordados (conversación agente / u
 |------|-----|
 | `/` | Solo login / registro |
 | `/servidores` | Lista, crear y unirse a servidores |
-| `/s/[slug]/clasificacion` | Clasificación porra + ver pronósticos ajenos |
-| `/s/[slug]/jornada` | Partidos, clasificación equipos, mis pronósticos |
+| `/s/[slug]/clasificacion?jornada=N` | Clasificación porra + ver pronósticos ajenos |
+| `/s/[slug]/jornada?jornada=N` | Partidos, clasificación equipos, mis pronósticos |
 | `/s/[slug]/cuenta` | Mi Usuario (cambiar nombre) |
-| `/s/[slug]/admin` | Simulación / resultados / suspender (solo owner) |
+| `/s/[slug]/admin?jornada=N` | Simulación / resultados / suspender / reiniciar (solo owner) |
 
 

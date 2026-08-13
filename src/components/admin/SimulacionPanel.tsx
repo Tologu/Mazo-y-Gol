@@ -8,6 +8,7 @@ import {
   eliminarBotClient,
   generarPronosticosClient,
   registrarResultadoClient,
+  reiniciarResultadosJornadaClient,
   suspenderPartidoClient,
 } from "@/lib/simulacion-client";
 import type { BotJugador, PartidoCalendario } from "@/lib/types";
@@ -136,6 +137,33 @@ export function SimulacionPanel({
     router.refresh();
   }
 
+  async function handleReiniciarResultados() {
+    setMessage(null);
+    const ok = window.confirm(
+      `¿Borrar resultados y puntos de la jornada ${jornada}? Los pronósticos se conservan.`,
+    );
+    if (!ok) return;
+
+    setBusy("reiniciar");
+    const res = await reiniciarResultadosJornadaClient(ligaId, jornada);
+    setBusy(null);
+    if (!res.ok) {
+      setMessage(res.error);
+      return;
+    }
+    setMarcadores((prev) => {
+      const next = { ...prev };
+      for (const p of partidos) {
+        next[p.partido_id] = { local: "", visitante: "" };
+      }
+      return next;
+    });
+    setMessage(
+      `Resultados de la jornada ${jornada} reiniciados (${res.data} partidos).`,
+    );
+    router.refresh();
+  }
+
   function setMarcador(partidoId: string, campo: keyof Marcador, valor: string) {
     setMarcadores((prev) => ({
       ...prev,
@@ -216,6 +244,16 @@ export function SimulacionPanel({
             disabled={busy !== null}
           >
             {busy === "pronosticos" ? "Generando..." : "Generar pronósticos bots"}
+          </button>
+          <button
+            type="button"
+            className="intro-btn intro-btn--login sim-btn"
+            onClick={handleReiniciarResultados}
+            disabled={busy !== null || partidos.length === 0}
+          >
+            {busy === "reiniciar"
+              ? "Reiniciando..."
+              : "Reiniciar resultados"}
           </button>
         </div>
       </section>

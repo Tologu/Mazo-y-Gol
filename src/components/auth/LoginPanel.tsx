@@ -47,7 +47,7 @@ export function LoginPanel({ demo = false }: Props) {
   async function handleLogin() {
     setMessage(null);
     if (demo) {
-      setMessage("Configura .env.local para iniciar sesión real.");
+      setMessage("Faltan variables de entorno de Supabase en el servidor.");
       return;
     }
     if (!email || !password) {
@@ -77,7 +77,7 @@ export function LoginPanel({ demo = false }: Props) {
   async function handleRegister() {
     setMessage(null);
     if (demo) {
-      setMessage("Configura .env.local para registrarte.");
+      setMessage("Faltan variables de entorno de Supabase en el servidor.");
       return;
     }
     if (!email || !password) {
@@ -137,7 +137,7 @@ export function LoginPanel({ demo = false }: Props) {
   async function handleRecoverPassword() {
     setMessage(null);
     if (demo) {
-      setMessage("Configura .env.local para recuperar contraseña.");
+      setMessage("Faltan variables de entorno de Supabase en el servidor.");
       return;
     }
     if (!email) {
@@ -194,7 +194,9 @@ export function LoginPanel({ demo = false }: Props) {
 
       {demo && (
         <p className="intro-note tve-yellow">
-          Falta configurar Supabase (.env.local) para poder entrar.
+          Falta configurar Supabase: añade NEXT_PUBLIC_SUPABASE_URL y
+          NEXT_PUBLIC_SUPABASE_ANON_KEY en Vercel (Settings → Environment
+          Variables) y vuelve a desplegar.
         </p>
       )}
 

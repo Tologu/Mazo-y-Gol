@@ -3,6 +3,7 @@ import {
   TeletextHeader,
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
+import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { StandingsTable } from "@/components/teletext/StandingsTable";
 import { getClasificacion } from "@/lib/data";
 import { getLigaBySlug } from "@/lib/servers";
@@ -10,12 +11,26 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+const TOTAL_JORNADAS = 38;
+
+function parseJornada(raw: string | undefined): number {
+  return Math.min(
+    TOTAL_JORNADAS,
+    Math.max(1, Number.parseInt(raw ?? "1", 10) || 1),
+  );
+}
+
 export default async function ClasificacionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ jornada?: string }>;
 }) {
   const { slug } = await params;
+  const { jornada: jornadaParam } = await searchParams;
+  const jornada = parseJornada(jornadaParam);
+
   const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
 
@@ -26,6 +41,7 @@ export default async function ClasificacionPage({
       <div className="tve-page">
         <TeletextHeader
           seccion={liga.nombre.toUpperCase()}
+          jornada={jornada}
           pagina="201"
         />
         <main className="tve-main">
@@ -36,7 +52,13 @@ export default async function ClasificacionPage({
           )}
 
           <section className="tve-section">
-            <StandingsTable filas={filas} ligaId={liga.id} jornada={1} />
+            <JornadaSelector
+              slug={slug}
+              basePath="clasificacion"
+              jornada={jornada}
+              totalJornadas={TOTAL_JORNADAS}
+            />
+            <StandingsTable filas={filas} ligaId={liga.id} jornada={jornada} />
           </section>
 
           <section className="tve-section">
