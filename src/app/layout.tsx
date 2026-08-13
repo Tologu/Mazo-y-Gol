@@ -10,7 +10,7 @@ const vt323 = VT323({
 
 export const metadata: Metadata = {
   title: "Mazo y Gol · Porra La Liga",
-  description: "Mazo y Gol — porra La Liga · estética teletexto TVE",
+  description: "Mazo y Gol — porra La Liga",
 };
 
 export const viewport: Viewport = {
