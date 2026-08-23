@@ -92,7 +92,11 @@ export default async function JornadaPage({
               izq="Mis pronósticos"
               der={`Jornada ${jornada}`}
             />
-            <MisPronosticosPanel partidos={partidos} pronosticos={pronosticos} />
+            <MisPronosticosPanel
+              key={jornada}
+              partidos={partidos}
+              pronosticos={pronosticos}
+            />
           </section>
         </main>
         <TeletextFooter pagina="209" />

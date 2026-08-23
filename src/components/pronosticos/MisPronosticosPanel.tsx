@@ -19,28 +19,44 @@ type Marcador = {
   visitante: string;
 };
 
+function marcadoresDesdeProps(
+  partidos: PartidoCalendario[],
+  pronosticos: PronosticoPropio[],
+): Record<string, Marcador> {
+  const porPartido = new Map(
+    pronosticos.map((pronostico) => [pronostico.partido_id, pronostico]),
+  );
+  return Object.fromEntries(
+    partidos.map((partido) => {
+      const pronostico = porPartido.get(partido.partido_id);
+      return [
+        partido.partido_id,
+        {
+          local: pronostico?.goles_local.toString() ?? "",
+          visitante: pronostico?.goles_visitante.toString() ?? "",
+        },
+      ];
+    }),
+  );
+}
+
 export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
   const router = useRouter();
   const pronosticosPorPartido = new Map(
     pronosticos.map((pronostico) => [pronostico.partido_id, pronostico]),
   );
   const [marcadores, setMarcadores] = useState<Record<string, Marcador>>(() =>
-    Object.fromEntries(
-      partidos.map((partido) => {
-        const pronostico = pronosticosPorPartido.get(partido.partido_id);
-        return [
-          partido.partido_id,
-          {
-            local: pronostico?.goles_local.toString() ?? "",
-            visitante: pronostico?.goles_visitante.toString() ?? "",
-          },
-        ];
-      }),
-    ),
+    marcadoresDesdeProps(partidos, pronosticos),
   );
   const [savingId, setSavingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+
+  // Al cambiar de jornada (navegación client) hay que rehidratar: useState
+  // solo usa las props del primer montaje y dejaba casillas vacías.
+  useEffect(() => {
+    setMarcadores(marcadoresDesdeProps(partidos, pronosticos));
+  }, [partidos, pronosticos]);
 
   useEffect(() => {
     const id = window.setInterval(() => setTick((n) => n + 1), 1000);
