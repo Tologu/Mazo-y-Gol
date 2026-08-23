@@ -1,17 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import type { FilaClasificacion, PronosticoAjeno } from "@/lib/types";
+import type {
+  FilaClasificacion,
+  PartidoCalendario,
+  PronosticoAjeno,
+} from "@/lib/types";
 import { nombreVisible } from "@/lib/nombre-visible";
 import { verPronosticosJugadorClient } from "@/lib/pronosticos-client";
+import { puntuarPronostico, type ResultadoPuntos } from "@/lib/puntuacion";
 
 type Props = {
   filas: FilaClasificacion[];
   ligaId: string;
   jornada: number;
+  partidos: PartidoCalendario[];
 };
 
-export function StandingsTable({ filas, ligaId, jornada }: Props) {
+function resultadoPartido(
+  pronostico: PronosticoAjeno,
+  partidos: PartidoCalendario[],
+): ResultadoPuntos | null {
+  const partido = partidos.find((p) => p.partido_id === pronostico.partido_id);
+  if (
+    partido?.goles_local == null ||
+    partido.goles_visitante == null
+  ) {
+    return null;
+  }
+  return puntuarPronostico(
+    pronostico.goles_local,
+    pronostico.goles_visitante,
+    partido.goles_local,
+    partido.goles_visitante,
+  );
+}
+
+export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
   const [abierto, setAbierto] = useState<string | null>(null);
   const [cargando, setCargando] = useState<string | null>(null);
   const [pronosticos, setPronosticos] = useState<
@@ -54,16 +79,19 @@ export function StandingsTable({ filas, ligaId, jornada }: Props) {
   }
 
   return (
-    <>
-      <div className="tve-colhead">
-        <span>Jugador</span>
-        <span>Puntos</span>
-      </div>
+    <div className="tve-rank-table">
       <p className="tve-empty tve-cyan">
         Pulsa un jugador para ver sus pronósticos de la jornada {jornada}
       </p>
+      <div className="tve-rank-head">
+        <span className="tve-rank-col-pos">#</span>
+        <span className="tve-rank-col-name">Jugador</span>
+        <span className="tve-rank-col-stat">Aciertos</span>
+        <span className="tve-rank-col-stat">Exactos</span>
+        <span className="tve-rank-col-stat">Puntos</span>
+      </div>
       {error && <p className="intro-msg">{error}</p>}
-      <div className="tve-list" role="list">
+      <div className="tve-list tve-rank-list" role="list">
         {filas.map((f, i) => {
           const tone = i % 2 === 0 ? "tve-row--white" : "tve-row--cyan";
           const displayName = nombreVisible(f.nombre);
@@ -84,10 +112,13 @@ export function StandingsTable({ filas, ligaId, jornada }: Props) {
                   {displayName}
                   {cargando === f.user_id ? " ..." : ""}
                 </span>
-                <span className="tve-rank-sub">
-                  {f.aciertos}ac {f.aciertos_exactos}ex
+                <span className="tve-rank-stat tve-rank-aciertos">
+                  {f.aciertos}
                 </span>
-                <span className="tve-rank-pts">{f.puntos}</span>
+                <span className="tve-rank-stat tve-rank-exactos">
+                  {f.aciertos_exactos}
+                </span>
+                <span className="tve-rank-stat tve-rank-pts">{f.puntos}</span>
               </button>
 
               {expandido && lista && (
@@ -100,15 +131,32 @@ export function StandingsTable({ filas, ligaId, jornada }: Props) {
                     <p className="tve-empty tve-yellow">Sin pronósticos.</p>
                   ) : (
                     <ul className="tve-pron-list">
-                      {lista.map((p) => (
-                        <li key={p.partido_id} className="tve-pron-item">
-                          <span className="tve-pron-local">{p.local}</span>
-                          <span className="tve-pron-score tve-yellow">
-                            {p.goles_local}-{p.goles_visitante}
-                          </span>
-                          <span className="tve-pron-away">{p.visitante}</span>
-                        </li>
-                      ))}
+                      {lista.map((p) => {
+                        const resultado = resultadoPartido(p, partidos);
+                        const claseAcierto =
+                          resultado?.tipo === "exacto"
+                            ? " tve-pron-item--exacto"
+                            : resultado?.tipo === "signo"
+                              ? " tve-pron-item--signo"
+                              : resultado?.tipo === "fallo"
+                                ? " tve-pron-item--fallo"
+                                : "";
+                        return (
+                          <li
+                            key={p.partido_id}
+                            className={`tve-pron-item${claseAcierto}`}
+                          >
+                            <span className="tve-pron-local">{p.local}</span>
+                            <span className="tve-pron-score">
+                              {p.goles_local}-{p.goles_visitante}
+                            </span>
+                            <span className="tve-pron-away">{p.visitante}</span>
+                            <span className="tve-pron-pts">
+                              {resultado ? `+${resultado.puntos}` : ""}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -117,6 +165,6 @@ export function StandingsTable({ filas, ligaId, jornada }: Props) {
           );
         })}
       </div>
-    </>
+    </div>
   );
 }

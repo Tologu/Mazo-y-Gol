@@ -257,8 +257,45 @@ a {
   min-width: 36px;
 }
 
+.tve-rank-table {
+  --tve-rank-cols: 2.5ch minmax(0, 1fr) 8.5ch 8.5ch 5.5ch;
+}
+
 .tve-row--rank {
-  grid-template-columns: 28px 1fr auto auto;
+  grid-template-columns: var(--tve-rank-cols);
+  gap: 4px 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.tve-rank-head {
+  display: grid;
+  grid-template-columns: var(--tve-rank-cols);
+  gap: 4px 8px;
+  align-items: end;
+  background-color: #0000ff;
+  color: #ffff00;
+  padding: 4px 8px;
+  font-size: 17px;
+  letter-spacing: 0.4px;
+  margin-top: 2px;
+  box-shadow:
+    2px 2px 0 #000033,
+    inset 0 -2px 0 #000066;
+}
+
+.tve-rank-col-pos {
+  text-align: center;
+}
+
+.tve-rank-col-name {
+  text-align: center;
+}
+
+.tve-rank-col-stat {
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Fila de clasificación pulsable (ver pronósticos del jugador) */
@@ -303,16 +340,34 @@ a {
 
 .tve-pron-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 5ch minmax(0, 1fr);
-  gap: 6px 10px;
+  grid-template-columns: minmax(0, 1fr) 5ch minmax(0, 1fr) 3.2ch;
+  gap: 6px 8px;
   align-items: center;
-  padding: 5px 4px;
-  border-bottom: 1px solid #000044;
+  padding: 6px 6px;
+  margin-bottom: 3px;
+  border: 2px solid #000044;
+  background-color: #000033;
   text-align: center;
 }
 
 .tve-pron-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.tve-pron-item--exacto {
+  background-color: #aa8800;
+  border-color: #ffcc00;
+  color: #000000;
+}
+
+.tve-pron-item--signo {
+  background-color: #006600;
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.tve-pron-item--fallo .tve-pron-pts {
+  color: #888888;
 }
 
 .tve-pron-local {
@@ -323,10 +378,34 @@ a {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
   text-align: center;
+  color: #ffff00;
+}
+
+.tve-pron-item--exacto .tve-pron-score {
+  color: #000000;
+}
+
+.tve-pron-item--signo .tve-pron-score {
+  color: #ffff00;
 }
 
 .tve-pron-away {
   text-align: left;
+}
+
+.tve-pron-pts {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #ffff00;
+}
+
+.tve-pron-item--exacto .tve-pron-pts {
+  color: #000000;
+}
+
+.tve-pron-item--signo .tve-pron-pts {
+  color: #ffff00;
 }
 
 /* Desplegable clasificación de equipos */
@@ -388,13 +467,15 @@ a {
 .tve-rank-pos {
   color: #00ff00;
   text-align: center;
-  font-size: 22px;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
 }
 
 .tve-rank-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
 }
 
 .tve-rank-sub {
@@ -403,11 +484,23 @@ a {
   white-space: nowrap;
 }
 
+.tve-rank-stat {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tve-rank-aciertos {
+  color: #00ff00;
+}
+
+.tve-rank-exactos {
+  color: #ffff00;
+}
+
 .tve-rank-pts {
   color: #ffff00;
-  font-size: 22px;
-  min-width: 32px;
-  text-align: right;
+  font-weight: bold;
 }
 
 .tve-bars {
@@ -1004,6 +1097,17 @@ a {
   .tve-colhead {
     font-size: 24px;
     padding: 5px 10px;
+  }
+
+  .tve-rank-head {
+    font-size: 18px;
+    padding: 5px 8px;
+  }
+
+  .tve-row--rank {
+    font-size: 19px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .tve-topbar {

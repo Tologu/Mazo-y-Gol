@@ -5,7 +5,7 @@ import {
 } from "@/components/teletext/TeletextShell";
 import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { StandingsTable } from "@/components/teletext/StandingsTable";
-import { getClasificacion } from "@/lib/data";
+import { getClasificacion, getPartidosJornada } from "@/lib/data";
 import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
@@ -35,7 +35,10 @@ export default async function ClasificacionPage({
   const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
 
-  const filas = await getClasificacion(liga.id);
+  const [filas, partidos] = await Promise.all([
+    getClasificacion(liga.id),
+    getPartidosJornada(jornada, liga.id),
+  ]);
 
   return (
     <div className="tve-page-wrap">
@@ -60,7 +63,13 @@ export default async function ClasificacionPage({
               jornada={jornada}
               totalJornadas={TOTAL_JORNADAS}
             />
-            <StandingsTable filas={filas} ligaId={liga.id} jornada={jornada} />
+            <StandingsTable
+              key={jornada}
+              filas={filas}
+              ligaId={liga.id}
+              jornada={jornada}
+              partidos={partidos}
+            />
           </section>
 
           <section className="tve-section">
