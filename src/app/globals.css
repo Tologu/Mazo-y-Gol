@@ -22,6 +22,7 @@ body {
   padding: 0;
   min-height: 100vh;
   min-height: 100dvh;
+  overflow-x: hidden;
   background-color: #000000;
   color: #ffffff;
   font-size: 20px;
@@ -57,15 +58,17 @@ a {
 
 .tve-page-wrap {
   min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 .tve-page {
-  max-width: 480px;
+  max-width: min(480px, 100%);
   margin: 0 auto;
   padding: 0 0 calc(56px + env(safe-area-inset-bottom, 0px) + 8px);
   background-color: #000000;
   border-left: 2px solid #0000ff;
   border-right: 2px solid #0000ff;
+  overflow-x: hidden;
   box-shadow:
     3px 3px 0 #000066,
     6px 6px 0 #000033;
@@ -73,7 +76,7 @@ a {
 
 @media (min-width: 768px) {
   .tve-page {
-    max-width: 640px;
+    max-width: min(640px, 100%);
     padding-bottom: 24px;
   }
 }
@@ -1064,6 +1067,7 @@ a {
   }
 
   .tve-page {
+    max-width: min(640px, 100%);
     border: 2px solid #0000ff;
     padding-bottom: 24px;
   }
@@ -1147,13 +1151,14 @@ a {
 
 .sim-add-bot {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 6px;
 }
 
 .sim-input-nombre {
   appearance: none;
-  flex: 1;
+  flex: 1 1 140px;
   min-width: 0;
   background-color: #000000;
   border: 2px solid #0000ff;
@@ -1172,10 +1177,12 @@ a {
 
 .sim-btn {
   width: auto;
-  flex-shrink: 0;
-  font-size: 18px;
-  padding: 8px 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  padding: 8px 8px;
   min-height: 40px;
+  white-space: normal;
 }
 
 .sim-bot-row {
@@ -1183,6 +1190,14 @@ a {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+
+.sim-bot-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sim-btn-delete,
@@ -1229,13 +1244,24 @@ a {
 
 .sim-jornada-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 6px;
   align-items: stretch;
 }
 
+.sim-jornada-bar--actions .sim-select-jornada {
+  flex: 1 1 100%;
+}
+
+.sim-jornada-bar--actions .sim-btn {
+  flex: 1 1 calc(50% - 8px);
+}
+
 .sim-select-jornada {
   appearance: none;
+  flex: 1;
+  min-width: 0;
   background-color: #000000;
   border: 2px solid #0000ff;
   color: #ffff00;
@@ -1244,6 +1270,27 @@ a {
   padding: 6px 8px;
   min-height: 40px;
   cursor: pointer;
+  text-align: center;
+}
+
+.sim-jornada-arrow {
+  appearance: none;
+  flex: 0 0 44px;
+  width: 44px;
+  background-color: #000000;
+  border: 2px solid #0000ff;
+  color: #ffff00;
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.sim-jornada-arrow:disabled {
+  color: #444444;
+  border-color: #000044;
+  cursor: default;
 }
 
 .jornada-countdown {
@@ -1274,16 +1321,28 @@ a {
   padding: 8px 6px;
   border-bottom: 1px solid #000066;
   font-size: 20px;
+  min-width: 0;
 }
 
 .sim-result-teams {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .sim-result-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+
+.sim-result-goals,
+.sim-result-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .sim-goal-input {
@@ -1342,10 +1401,54 @@ a {
 }
 
 @media (min-width: 768px) {
+  .sim-add-bot {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .sim-btn {
+    flex: 0 0 auto;
+    font-size: 18px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  .sim-jornada-bar {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .sim-jornada-bar--actions .sim-select-jornada {
+    flex: 1 1 auto;
+  }
+
+  .sim-jornada-bar--actions .sim-btn {
+    flex: 0 0 auto;
+    font-size: 18px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
   .sim-result-row {
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
+    column-gap: 12px;
+  }
+
+  .sim-result-teams {
+    overflow-wrap: anywhere;
+  }
+
+  .sim-result-controls {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+
+  .sim-btn-save,
+  .sim-btn-suspend {
+    min-width: 7.2em;
+    text-align: center;
   }
 
   .prediction-row {

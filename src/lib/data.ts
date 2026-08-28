@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { TIMELOCK_MARGIN_MS } from "@/lib/timelock";
 import type {
   FilaClasificacion,
   FilaEquipo,
@@ -26,6 +27,44 @@ export async function getPartidosJornada(
 
   if (error || !data) return [];
   return data as PartidoCalendario[];
+}
+
+/**
+ * Última jornada cuyos pronósticos ya están cerrados (time-lock).
+ * Si aún no ha cerrado ninguna, devuelve 1.
+ */
+export async function getUltimaJornadaCerrada(ligaId?: string): Promise<number> {
+  if (!ligaId) return 1;
+
+  const supabase = await createServerClient();
+  if (!supabase) return 1;
+
+  const { data, error } = await supabase
+    .from("v_partidos_calendario")
+    .select("jornada_numero, fecha_inicio")
+    .eq("liga_id", ligaId);
+
+  if (error || !data?.length) return 1;
+
+  const cierrePorJornada = new Map<number, number>();
+  for (const row of data) {
+    const numero = row.jornada_numero as number;
+    const inicio = new Date(row.fecha_inicio as string).getTime();
+    if (Number.isNaN(inicio)) continue;
+    const actual = cierrePorJornada.get(numero);
+    if (actual == null || inicio < actual) {
+      cierrePorJornada.set(numero, inicio);
+    }
+  }
+
+  const now = Date.now();
+  let ultima = 1;
+  for (const [numero, inicio] of cierrePorJornada) {
+    if (now >= inicio - TIMELOCK_MARGIN_MS && numero > ultima) {
+      ultima = numero;
+    }
+  }
+  return ultima;
 }
 
 export async function getClasificacion(

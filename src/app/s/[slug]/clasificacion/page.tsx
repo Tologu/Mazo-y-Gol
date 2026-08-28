@@ -5,21 +5,17 @@ import {
 } from "@/components/teletext/TeletextShell";
 import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { StandingsTable } from "@/components/teletext/StandingsTable";
-import { getClasificacion, getPartidosJornada } from "@/lib/data";
+import {
+  getClasificacion,
+  getPartidosJornada,
+  getUltimaJornadaCerrada,
+} from "@/lib/data";
+import { TOTAL_JORNADAS, parseJornadaParam } from "@/lib/jornadas";
 import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const TOTAL_JORNADAS = 38;
-
-function parseJornada(raw: string | undefined): number {
-  return Math.min(
-    TOTAL_JORNADAS,
-    Math.max(1, Number.parseInt(raw ?? "1", 10) || 1),
-  );
-}
 
 export default async function ClasificacionPage({
   params,
@@ -30,10 +26,12 @@ export default async function ClasificacionPage({
 }) {
   const { slug } = await params;
   const { jornada: jornadaParam } = await searchParams;
-  const jornada = parseJornada(jornadaParam);
 
   const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
+
+  const jornada =
+    parseJornadaParam(jornadaParam) ?? (await getUltimaJornadaCerrada(liga.id));
 
   const [filas, partidos] = await Promise.all([
     getClasificacion(liga.id),
@@ -64,7 +62,6 @@ export default async function ClasificacionPage({
               totalJornadas={TOTAL_JORNADAS}
             />
             <StandingsTable
-              key={jornada}
               filas={filas}
               ligaId={liga.id}
               jornada={jornada}

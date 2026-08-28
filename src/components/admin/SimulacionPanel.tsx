@@ -225,7 +225,7 @@ export function SimulacionPanel({
 
       <section className="tve-section">
         <TeletextColHead izq={`Jornada ${jornada}`} der="Pronósticos" />
-        <div className="sim-jornada-bar">
+        <div className="sim-jornada-bar sim-jornada-bar--actions">
           <select
             className="sim-select-jornada"
             value={jornada}
@@ -283,56 +283,60 @@ export function SimulacionPanel({
                     )}
                   </span>
                   <span className="sim-result-controls">
-                    <input
-                      type="number"
-                      className="sim-goal-input"
-                      min={0}
-                      max={20}
-                      value={marcadores[p.partido_id]?.local ?? ""}
-                      onChange={(e) =>
-                        setMarcador(p.partido_id, "local", e.target.value)
-                      }
-                      aria-label={`Goles ${p.local}`}
-                    />
-                    <span className="tve-yellow">-</span>
-                    <input
-                      type="number"
-                      className="sim-goal-input"
-                      min={0}
-                      max={20}
-                      value={marcadores[p.partido_id]?.visitante ?? ""}
-                      onChange={(e) =>
-                        setMarcador(p.partido_id, "visitante", e.target.value)
-                      }
-                      aria-label={`Goles ${p.visitante}`}
-                    />
-                    <button
-                      type="button"
-                      className="sim-btn-save"
-                      onClick={() => handleGuardarResultado(p)}
-                      disabled={busy !== null}
-                    >
-                      {busy === `resultado-${p.partido_id}`
-                        ? "..."
-                        : suspendido
-                          ? "Resultado"
-                          : "Guardar"}
-                    </button>
-                    <button
-                      type="button"
-                      className="sim-btn-suspend"
-                      onClick={() => handleSuspender(p)}
-                      disabled={busy !== null || suspendido}
-                      title={
-                        suspendido
-                          ? "Ya está suspendido. Usa Resultado para el marcador real."
-                          : "Marcar como suspendido"
-                      }
-                    >
-                      {busy === `suspender-${p.partido_id}`
-                        ? "..."
-                        : "Suspender"}
-                    </button>
+                    <span className="sim-result-goals">
+                      <input
+                        type="number"
+                        className="sim-goal-input"
+                        min={0}
+                        max={20}
+                        value={marcadores[p.partido_id]?.local ?? ""}
+                        onChange={(e) =>
+                          setMarcador(p.partido_id, "local", e.target.value)
+                        }
+                        aria-label={`Goles ${p.local}`}
+                      />
+                      <span className="tve-yellow">-</span>
+                      <input
+                        type="number"
+                        className="sim-goal-input"
+                        min={0}
+                        max={20}
+                        value={marcadores[p.partido_id]?.visitante ?? ""}
+                        onChange={(e) =>
+                          setMarcador(p.partido_id, "visitante", e.target.value)
+                        }
+                        aria-label={`Goles ${p.visitante}`}
+                      />
+                    </span>
+                    <span className="sim-result-actions">
+                      <button
+                        type="button"
+                        className="sim-btn-save"
+                        onClick={() => handleGuardarResultado(p)}
+                        disabled={busy !== null}
+                      >
+                        {busy === `resultado-${p.partido_id}`
+                          ? "..."
+                          : suspendido
+                            ? "Resultado"
+                            : "Guardar"}
+                      </button>
+                      <button
+                        type="button"
+                        className="sim-btn-suspend"
+                        onClick={() => handleSuspender(p)}
+                        disabled={busy !== null || suspendido}
+                        title={
+                          suspendido
+                            ? "Ya está suspendido. Usa Resultado para el marcador real."
+                            : "Marcar como suspendido"
+                        }
+                      >
+                        {busy === `suspender-${p.partido_id}`
+                          ? "..."
+                          : "Suspender"}
+                      </button>
+                    </span>
                   </span>
                 </li>
               );

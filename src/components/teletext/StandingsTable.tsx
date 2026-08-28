@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   FilaClasificacion,
   PartidoCalendario,
@@ -16,6 +16,10 @@ type Props = {
   jornada: number;
   partidos: PartidoCalendario[];
 };
+
+function clavePronosticos(userId: string, jornada: number): string {
+  return `${userId}:${jornada}`;
+}
 
 function resultadoPartido(
   pronostico: PronosticoAjeno,
@@ -44,6 +48,37 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
   >({});
   const [error, setError] = useState<string | null>(null);
 
+  async function cargarPronosticos(userId: string, jornadaDestino: number) {
+    const clave = clavePronosticos(userId, jornadaDestino);
+    setError(null);
+    setCargando(userId);
+    const res = await verPronosticosJugadorClient(
+      ligaId,
+      jornadaDestino,
+      userId,
+    );
+    setCargando(null);
+
+    if (!res.ok) {
+      setError(res.error);
+      return false;
+    }
+
+    setPronosticos((current) => ({ ...current, [clave]: res.data }));
+    return true;
+  }
+
+  // Al cambiar de jornada, el jugador sigue desplegado y se piden sus
+  // pronósticos de esa jornada. Solo se cierra si pulsa de nuevo.
+  useEffect(() => {
+    if (!abierto) return;
+    const clave = clavePronosticos(abierto, jornada);
+    if (pronosticos[clave]) return;
+
+    void cargarPronosticos(abierto, jornada);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo jornada / jugador abierto
+  }, [jornada, abierto, ligaId]);
+
   if (filas.length === 0) {
     return (
       <p className="tve-empty tve-yellow">
@@ -53,29 +88,21 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
   }
 
   async function toggleJugador(fila: FilaClasificacion) {
-    setError(null);
-
     if (abierto === fila.user_id) {
       setAbierto(null);
+      setError(null);
       return;
     }
 
-    if (pronosticos[fila.user_id]) {
+    const clave = clavePronosticos(fila.user_id, jornada);
+    if (pronosticos[clave]) {
+      setError(null);
       setAbierto(fila.user_id);
       return;
     }
 
-    setCargando(fila.user_id);
-    const res = await verPronosticosJugadorClient(ligaId, jornada, fila.user_id);
-    setCargando(null);
-
-    if (!res.ok) {
-      setError(res.error);
-      return;
-    }
-
-    setPronosticos((current) => ({ ...current, [fila.user_id]: res.data }));
-    setAbierto(fila.user_id);
+    const ok = await cargarPronosticos(fila.user_id, jornada);
+    if (ok) setAbierto(fila.user_id);
   }
 
   return (
@@ -96,7 +123,7 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
           const tone = i % 2 === 0 ? "tve-row--white" : "tve-row--cyan";
           const displayName = nombreVisible(f.nombre);
           const expandido = abierto === f.user_id;
-          const lista = pronosticos[f.user_id];
+          const lista = pronosticos[clavePronosticos(f.user_id, jornada)];
 
           return (
             <div role="listitem" key={f.user_id}>
@@ -121,13 +148,19 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
                 <span className="tve-rank-stat tve-rank-pts">{f.puntos}</span>
               </button>
 
-              {expandido && lista && (
+              {expandido && (
                 <div className="tve-pron-detail">
                   <div className="tve-colhead">
                     <span>Pronósticos · {displayName}</span>
                     <span>J{jornada}</span>
                   </div>
-                  {lista.length === 0 ? (
+                  {!lista ? (
+                    <p className="tve-empty tve-yellow">
+                      {cargando === f.user_id
+                        ? "Cargando pronósticos..."
+                        : "Sin pronósticos."}
+                    </p>
+                  ) : lista.length === 0 ? (
                     <p className="tve-empty tve-yellow">Sin pronósticos.</p>
                   ) : (
                     <ul className="tve-pron-list">

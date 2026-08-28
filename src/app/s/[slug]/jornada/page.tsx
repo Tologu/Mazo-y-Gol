@@ -13,22 +13,15 @@ import {
   getClasificacionEquipos,
   getMisPronosticosJornada,
   getPartidosJornada,
+  getUltimaJornadaCerrada,
 } from "@/lib/data";
+import { TOTAL_JORNADAS, parseJornadaParam } from "@/lib/jornadas";
 import { etiquetaModoJuego } from "@/lib/modo-juego";
 import { getLigaBySlug } from "@/lib/servers";
 import { formatFechaTeletext } from "@/lib/teletext-format";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const TOTAL_JORNADAS = 38;
-
-function parseJornada(raw: string | undefined): number {
-  return Math.min(
-    TOTAL_JORNADAS,
-    Math.max(1, Number.parseInt(raw ?? "1", 10) || 1),
-  );
-}
 
 export default async function JornadaPage({
   params,
@@ -39,10 +32,12 @@ export default async function JornadaPage({
 }) {
   const { slug } = await params;
   const { jornada: jornadaParam } = await searchParams;
-  const jornada = parseJornada(jornadaParam);
 
   const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
+
+  const jornada =
+    parseJornadaParam(jornadaParam) ?? (await getUltimaJornadaCerrada(liga.id));
 
   const [partidos, equipos] = await Promise.all([
     getPartidosJornada(jornada, liga.id),

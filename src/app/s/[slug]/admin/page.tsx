@@ -5,12 +5,11 @@ import {
 } from "@/components/teletext/TeletextShell";
 import { SimulacionPanel } from "@/components/admin/SimulacionPanel";
 import { getPartidosJornada } from "@/lib/data";
+import { TOTAL_JORNADAS } from "@/lib/jornadas";
 import { getBotsLiga, getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const TOTAL_JORNADAS = 38;
 
 export default async function AdminPage({
   params,
