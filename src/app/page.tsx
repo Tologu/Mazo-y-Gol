@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { IntroHero } from "@/components/auth/IntroHero";
 import { LoginPanel } from "@/components/auth/LoginPanel";
+import { ComoSeJuegaPanel } from "@/components/help/ComoSeJuegaPanel";
 import { hasSupabaseEnv } from "@/lib/supabase/server";
 import { getSessionUser } from "@/lib/auth";
 import { resolvePostLoginPath } from "@/lib/servers";
@@ -44,6 +45,7 @@ export default async function IntroPage({
     <div className="intro-screen">
       <div className="intro-page">
         <IntroHero />
+        <ComoSeJuegaPanel />
         <Suspense
           fallback={
             <section className="intro-panel">

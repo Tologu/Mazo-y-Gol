@@ -4,6 +4,7 @@ import {
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
 import { SimulacionPanel } from "@/components/admin/SimulacionPanel";
+import { AdminGuiaPanel } from "@/components/help/AdminGuiaPanel";
 import { getPartidosJornada, getUltimaJornadaCerrada } from "@/lib/data";
 import { TOTAL_JORNADAS, parseJornadaParam } from "@/lib/jornadas";
 import { getBotsLiga, getLigaBySlug } from "@/lib/servers";
@@ -44,6 +45,7 @@ export default async function AdminPage({
           pagina="500"
         />
         <main className="tve-main">
+          <AdminGuiaPanel />
           <SimulacionPanel
             ligaId={liga.id}
             slug={slug}
