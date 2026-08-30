@@ -4,8 +4,8 @@ import {
   TeletextNav,
 } from "@/components/teletext/TeletextShell";
 import { SimulacionPanel } from "@/components/admin/SimulacionPanel";
-import { getPartidosJornada } from "@/lib/data";
-import { TOTAL_JORNADAS } from "@/lib/jornadas";
+import { getPartidosJornada, getUltimaJornadaCerrada } from "@/lib/data";
+import { TOTAL_JORNADAS, parseJornadaParam } from "@/lib/jornadas";
 import { getBotsLiga, getLigaBySlug } from "@/lib/servers";
 import { redirect } from "next/navigation";
 
@@ -27,10 +27,8 @@ export default async function AdminPage({
     redirect(`/s/${slug}/clasificacion`);
   }
 
-  const jornada = Math.min(
-    TOTAL_JORNADAS,
-    Math.max(1, Number.parseInt(jornadaParam ?? "1", 10) || 1),
-  );
+  const jornada =
+    parseJornadaParam(jornadaParam) ?? (await getUltimaJornadaCerrada(liga.id));
 
   const [bots, partidos] = await Promise.all([
     getBotsLiga(liga.id),
