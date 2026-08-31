@@ -1385,6 +1385,57 @@ a {
   border-bottom: 1px solid #000066;
 }
 
+.jornada-status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #000066;
+}
+
+.jornada-status-bar .jornada-countdown {
+  flex: 1 1 220px;
+  border-bottom: none;
+}
+
+.jornada-open-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  flex: 0 0 auto;
+}
+
+.jornada-open-btn {
+  appearance: none;
+  border: none;
+  font: inherit;
+  font-size: 16px;
+  padding: 8px 12px;
+  min-height: 40px;
+  cursor: pointer;
+  background-color: #ffff00;
+  color: #0000ff;
+  box-shadow: 2px 2px 0 #000033;
+  white-space: nowrap;
+}
+
+.jornada-open-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.jornada-open-btn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.jornada-open-msg {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
 .jornada-countdown-digits {
   font-size: 22px;
   letter-spacing: 1px;

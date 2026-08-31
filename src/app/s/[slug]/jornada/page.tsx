@@ -74,6 +74,9 @@ export default async function JornadaPage({
               fechaInicio={fechaCierre}
               fechaApertura={fechaApertura}
               jornada={jornada}
+              esOwner={liga.es_owner}
+              ligaId={liga.id}
+              aperturaForzada={partidos[0]?.apertura_forzada === true}
             />
             <JornadaPanel partidos={partidos} />
           </section>

@@ -19,7 +19,7 @@ export async function getPartidosJornada(
   const { data, error } = await supabase
     .from("v_partidos_calendario")
     .select(
-      "partido_id, jornada_numero, local, visitante, fecha_inicio, fecha_apertura, goles_local, goles_visitante, partido_estado, bloqueado, abierta",
+      "partido_id, jornada_numero, local, visitante, fecha_inicio, fecha_apertura, goles_local, goles_visitante, partido_estado, bloqueado, abierta, apertura_forzada",
     )
     .eq("liga_id", ligaId)
     .eq("jornada_numero", jornada)

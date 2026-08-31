@@ -11,6 +11,8 @@ export type PartidoCalendario = {
   partido_estado: string;
   bloqueado: boolean;
   abierta: boolean;
+  /** True si el admin abrió esta jornada a mano (sin abrir las anteriores). */
+  apertura_forzada?: boolean;
 };
 
 export type PronosticoPropio = {

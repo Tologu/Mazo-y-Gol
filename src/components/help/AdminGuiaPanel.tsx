@@ -30,6 +30,13 @@ export function AdminGuiaPanel() {
               cerrados.
             </li>
             <li>
+              <span className="tve-yellow">Abrir pronósticos:</span> en la
+              pestaña Jornada, si una jornada aún no se ha abierto por
+              secuencia (p. ej. se juega la 6 antes que la 4), usa{" "}
+              <span className="tve-cyan">Abrir pronósticos</span> junto al
+              contador. Solo abre esa jornada; las anteriores siguen cerradas.
+            </li>
+            <li>
               <span className="tve-yellow">Resultado normal:</span> escribe goles
               local y visitante en cada partido y pulsa{" "}
               <span className="tve-green">Guardar</span>. Repite hasta completar
