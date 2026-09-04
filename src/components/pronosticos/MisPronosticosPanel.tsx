@@ -148,13 +148,13 @@ export function MisPronosticosPanel({ partidos, pronosticos }: Props) {
           const tieneResultado =
             partido.goles_local !== null && partido.goles_visitante !== null;
           const suspendido = partido.partido_estado === "suspendido";
-          // Suspendido: se puede pronosticar aunque haya pasado la hora,
-          // pero no si la jornada todavía no se ha abierto.
+          // Suspendido sin resultado: se puede pronosticar aunque la jornada
+          // ya haya cerrado (time-lock). No si aún no se ha abierto.
           const cerrado =
             jornadaNoAbierta ||
             tieneResultado ||
-            (partido.bloqueado && !suspendido) ||
-            ventana === "cerrada";
+            (!suspendido &&
+              (partido.bloqueado || ventana === "cerrada"));
           const guardado = pronosticosPorPartido.has(partido.partido_id);
 
           return (
