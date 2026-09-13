@@ -18,14 +18,9 @@ export function ComoSeJuegaPanel() {
             cada partido antes de que cierre el plazo.
           </li>
           <li>
-            Las jornadas se abren en orden: la jornada{" "}
-            <span className="tve-cyan">N</span> se abre cuando cierra la{" "}
-            <span className="tve-cyan">N-1</span>.
-          </li>
-          <li>
             <span className="tve-yellow">Puntuación:</span>{" "}
             <span className="tve-yellow">exacto</span> = 5 pts ·{" "}
-            <span className="tve-green">signo 1X2</span> = 2 pts ·{" "}
+            <span className="tve-green">acierto simple</span> = 2 pts ·{" "}
             <span className="tve-red">fallo</span> = 0 pts.
           </li>
           <li>
@@ -37,6 +32,19 @@ export function ComoSeJuegaPanel() {
             Si un partido está <span className="tve-red">suspendido</span>,
             puedes guardar pronóstico igualmente hasta que haya resultado
             oficial.
+          </li>
+          <li>
+            <span className="tve-yellow">Cromos</span> (solo en servidores{" "}
+            <span className="tve-cyan">Mazo y Gol</span>): en la pestaña{" "}
+            <span className="tve-green">Cromos</span> juegas cartas sobre un
+            partido antes de que cierre.{" "}
+            <span className="tve-green">Bonificaciones</span> sobre tus puntos y{" "}
+            <span className="tve-red">ataques</span> contra un rival que vaya
+            hasta 3 puestos por encima de ti.
+          </li>
+          <li>
+            Los aciertos dan <span className="tve-yellow">monedas</span> (10 por
+            exacto, 4 por signo) y con ellas compras más cromos.
           </li>
         </ol>
         <p className="tve-help-note tve-yellow">

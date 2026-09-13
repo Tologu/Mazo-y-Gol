@@ -174,6 +174,10 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
                               : resultado?.tipo === "fallo"
                                 ? " tve-pron-item--fallo"
                                 : "";
+                        // Los puntos escrutados ya llevan los cromos; el
+                        // cálculo local solo cubre partidos sin escrutar.
+                        const puntos = p.puntos_finales ?? resultado?.puntos;
+                        const cromos = p.cromos ?? [];
                         return (
                           <li
                             key={p.partido_id}
@@ -185,8 +189,22 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
                             </span>
                             <span className="tve-pron-away">{p.visitante}</span>
                             <span className="tve-pron-pts">
-                              {resultado ? `+${resultado.puntos}` : ""}
+                              {puntos == null
+                                ? ""
+                                : puntos < 0
+                                  ? puntos
+                                  : `+${puntos}`}
                             </span>
+                            {cromos.length > 0 && (
+                              <span className="tve-pron-cromos">
+                                {cromos
+                                  .map(
+                                    (cromo) =>
+                                      `${cromo.nombre} (${cromo.delta > 0 ? "+" : ""}${cromo.delta})`,
+                                  )
+                                  .join(" · ")}
+                              </span>
+                            )}
                           </li>
                         );
                       })}

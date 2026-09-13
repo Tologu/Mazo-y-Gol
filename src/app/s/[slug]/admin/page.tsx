@@ -57,7 +57,12 @@ export default async function AdminPage({
         </main>
         <TeletextFooter pagina="500" />
       </div>
-      <TeletextNav active="admin" slug={slug} showAdmin />
+      <TeletextNav
+        active="admin"
+        slug={slug}
+        showAdmin
+        showCromos={liga.modo_juego === "mazo_y_gol"}
+      />
     </div>
   );
 }

@@ -51,7 +51,12 @@ export default async function CuentaPage({
         </main>
         <TeletextFooter pagina="600" />
       </div>
-      <TeletextNav active="cuenta" slug={slug} showAdmin={liga.es_owner} />
+      <TeletextNav
+        active="cuenta"
+        slug={slug}
+        showAdmin={liga.es_owner}
+        showCromos={liga.modo_juego === "mazo_y_gol"}
+      />
     </div>
   );
 }

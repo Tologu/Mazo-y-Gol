@@ -11,6 +11,7 @@ import { TeamStandingsTable } from "@/components/teletext/TeamStandingsTable";
 import { MisPronosticosPanel } from "@/components/pronosticos/MisPronosticosPanel";
 import {
   getClasificacionEquipos,
+  getCromosJornada,
   getMisPronosticosJornada,
   getPartidosJornada,
   getUltimaJornadaCerrada,
@@ -44,6 +45,16 @@ export default async function JornadaPage({
     getClasificacionEquipos(liga.id),
   ]);
   const pronosticos = await getMisPronosticosJornada(partidos);
+
+  // Ataques que te han lanzado esta jornada: conviene enterarse aquí.
+  const cromosJornada =
+    liga.modo_juego === "mazo_y_gol"
+      ? await getCromosJornada(liga.id, jornada)
+      : [];
+  const ataquesRecibidos = cromosJornada.filter(
+    (cromo) => !cromo.es_emisor && cromo.estado !== "reembolsado",
+  );
+
   const fechaCierre = partidos[0]?.fecha_inicio;
   const fechaApertura = partidos[0]?.fecha_apertura;
   const fechaRef = fechaCierre ? formatFechaTeletext(fechaCierre) : undefined;
@@ -81,6 +92,23 @@ export default async function JornadaPage({
             <JornadaPanel partidos={partidos} />
           </section>
 
+          {ataquesRecibidos.length > 0 && (
+            <section className="tve-section tve-section--sub">
+              <TeletextColHead izq="Ataques recibidos" der={`J${jornada}`} />
+              <div className="tve-list">
+                {ataquesRecibidos.map((cromo) => (
+                  <div className="tve-mov-row" key={cromo.aplicado_id}>
+                    <span className="tve-red">{cromo.cromo_nombre}</span>
+                    <span className="tve-cyan">
+                      {cromo.local} - {cromo.visitante}
+                    </span>
+                    <span className="tve-white">{cromo.emisor_nombre}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           <section className="tve-section tve-section--sub">
             <TeamStandingsTable filas={equipos} />
           </section>
@@ -99,7 +127,12 @@ export default async function JornadaPage({
         </main>
         <TeletextFooter pagina="209" />
       </div>
-      <TeletextNav active="jornada" slug={slug} showAdmin={liga.es_owner} />
+      <TeletextNav
+        active="jornada"
+        slug={slug}
+        showAdmin={liga.es_owner}
+        showCromos={liga.modo_juego === "mazo_y_gol"}
+      />
     </div>
   );
 }

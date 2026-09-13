@@ -122,8 +122,8 @@ export function ServerActionsPanel() {
           </label>
           {modoJuego === "mazo_y_gol" && (
             <p className="intro-note tve-yellow">
-              Cromos próximamente en la app. El modo queda reservado para cuando
-              estén activos.
+              Empiezas con un mazo y 200 monedas. Los cromos se juegan en la
+              pestaña Cromos del servidor.
             </p>
           )}
         </fieldset>

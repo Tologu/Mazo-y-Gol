@@ -357,6 +357,13 @@ a {
   margin-bottom: 0;
 }
 
+/* Cromos que intervinieron: ocupan toda la fila bajo el marcador. */
+.tve-pron-cromos {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  color: #00ffff;
+}
+
 .tve-pron-item--exacto {
   background-color: #aa8800;
   border-color: #ffcc00;
@@ -1533,6 +1540,324 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+/* --- Cromos ------------------------------------------------------- */
+
+.tve-mano {
+  --mano-flotante-scale: 2.55;
+  overflow: hidden;
+  padding: 8px 6px 4px;
+}
+
+.tve-mano--flotante {
+  overflow: visible;
+  position: relative;
+  z-index: 40;
+}
+
+.tve-mano-stage {
+  --mano-step: 28px;
+  position: relative;
+  height: 168px;
+  perspective: 720px;
+  transform-style: preserve-3d;
+  touch-action: pan-y;
+}
+
+.tve-mano--flotante .tve-mano-stage {
+  overflow: visible;
+}
+
+.tve-mano-slot {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 88px;
+  margin-left: -44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  transform-style: preserve-3d;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  transition:
+    transform 220ms linear,
+    opacity 220ms linear;
+}
+
+.tve-mano-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 0 4px;
+}
+
+.tve-carta {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  background-color: #000022;
+  border: 2px solid #00ff00;
+  box-shadow: 2px 2px 0 #003300;
+  overflow: hidden;
+}
+
+.tve-carta--ataque {
+  border-color: #ff0000;
+  box-shadow: 2px 2px 0 #330000;
+}
+
+.tve-carta--arte {
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.tve-carta-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.tve-carta-stock {
+  position: absolute;
+  left: 5px;
+  bottom: 7px;
+  padding: 0 3px;
+  font-size: 10px;
+  line-height: 1.15;
+  letter-spacing: 0.2px;
+  color: #ffff00;
+  background-color: rgba(0, 0, 0, 0.72);
+  border: 1px solid #0000ff;
+  box-shadow: 1px 1px 0 #000033;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tve-carta-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: calc(100% - 28px);
+  padding: 6px;
+  text-align: center;
+}
+
+.tve-carta-fallback-nombre {
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.tve-carta-pie {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 2px 4px;
+  background-color: #000000;
+  border-top: 2px solid #0000ff;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.tve-carta-pie-nombre {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tve-cromo-acciones {
+  margin: 0 6px 10px;
+  border: 2px solid #0000ff;
+  padding: 8px 6px;
+}
+
+.tve-cromo-btn {
+  min-height: 40px;
+  width: 100%;
+}
+
+.tve-cromo-tienda {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 6px;
+}
+
+.tve-cromo-list {
+  border-top: 1px solid #000066;
+}
+
+.tve-cromo {
+  border-bottom: 1px solid #000066;
+}
+
+.tve-cromo-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  padding: 9px 6px;
+  font: inherit;
+  font-size: 19px;
+  text-align: left;
+  color: #ffffff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.tve-cromo-head:disabled {
+  color: #999999;
+  cursor: default;
+}
+
+.tve-cromo-nombre {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tve-cromo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 6px 10px;
+  background-color: #000022;
+}
+
+.tve-cromo-desc {
+  margin: 0;
+  font-size: 17px;
+  color: #00ffff;
+}
+
+.tve-cromo-juego {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 9px 6px;
+  border-bottom: 1px solid #000066;
+}
+
+.tve-cromo-juego-info {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  align-items: center;
+  font-size: 19px;
+}
+
+.tve-cromo-juego-info span:nth-child(3) {
+  grid-column: 2 / 4;
+  font-size: 17px;
+}
+
+.tve-cromo-juego-info span:last-child {
+  grid-column: 1 / 4;
+  font-size: 17px;
+}
+
+.tve-cromo-juego-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 17px;
+}
+
+.tve-mov-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 6px;
+  font-size: 18px;
+}
+
+.tve-mov-row:nth-child(even) {
+  background-color: #000022;
+}
+
+.tve-mov-row span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .tve-mano {
+    --mano-flotante-scale: 2.2;
+  }
+
+  .tve-mano-stage {
+    --mano-step: 48px;
+    height: 228px;
+  }
+
+  .tve-mano-slot {
+    width: 120px;
+    margin-left: -60px;
+  }
+
+  .tve-carta-fallback-nombre,
+  .tve-carta-pie {
+    font-size: 16px;
+  }
+
+  .tve-carta-stock {
+    left: 7px;
+    bottom: 9px;
+    font-size: 11px;
+  }
+
+  .tve-cromo-head,
+  .tve-cromo-juego-info {
+    font-size: 21px;
+  }
+
+  .tve-cromo-juego-info {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .tve-cromo-juego-info span:nth-child(3),
+  .tve-cromo-juego-info span:last-child {
+    grid-column: auto;
+  }
+
+  .tve-cromo-body {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tve-cromo-body.tve-cromo-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tve-cromo-desc {
+    flex: 1 1 100%;
+  }
 }
 
 @media (min-width: 768px) {

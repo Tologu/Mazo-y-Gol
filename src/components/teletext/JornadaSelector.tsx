@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 type Props = {
   slug: string;
-  basePath: "jornada" | "clasificacion";
+  basePath: "jornada" | "clasificacion" | "cromos";
   jornada: number;
   totalJornadas?: number;
 };

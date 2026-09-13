@@ -84,13 +84,24 @@ export default async function ClasificacionPage({
               <li>
                 <span className="tve-red">Fallo</span> = 0 puntos
               </li>
+              {liga.modo_juego === "mazo_y_gol" && (
+                <li>
+                  Los <span className="tve-cyan">cromos</span> se suman al
+                  escrutar el partido
+                </li>
+              )}
               <li>38 jornadas · 10 partidos · L/V/E</li>
             </ul>
           </section>
         </main>
         <TeletextFooter pagina="201" />
       </div>
-      <TeletextNav active="inicio" slug={slug} showAdmin={liga.es_owner} />
+      <TeletextNav
+        active="inicio"
+        slug={slug}
+        showAdmin={liga.es_owner}
+        showCromos={liga.modo_juego === "mazo_y_gol"}
+      />
     </div>
   );
 }

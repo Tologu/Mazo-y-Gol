@@ -61,6 +61,14 @@ export function AdminGuiaPanel() {
               Los <span className="tve-cyan">bots</span> son opcionales: sirven
               para simular jugadores y generar pronósticos de prueba.
             </li>
+            <li>
+              <span className="tve-yellow">Servidores Mazo y Gol:</span> los
+              cromos se aplican solos al guardar el resultado. Al{" "}
+              <span className="tve-red">suspender</span> un partido, las cartas
+              jugadas vuelven al mazo de cada jugador; si{" "}
+              <span className="tve-cyan">reinicias resultados</span>, se
+              recalculan y las monedas repartidas se retiran.
+            </li>
           </ol>
         </div>
       )}

@@ -1,8 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { TIMELOCK_MARGIN_MS } from "@/lib/timelock";
 import type {
+  CromoEnJuego,
+  CromoMazo,
   FilaClasificacion,
   FilaEquipo,
+  MovimientoMonedas,
   PartidoCalendario,
   PronosticoPropio,
 } from "@/lib/types";
@@ -179,6 +182,86 @@ export async function getMisPronosticosJornada(
 
   if (error || !data) return [];
   return data as PronosticoPropio[];
+}
+
+/**
+ * Catálogo de cromos con la cantidad que tiene el usuario en esa liga.
+ * `precio` viene de un bigint, que PostgREST puede serializar como texto.
+ */
+export async function getMiMazo(ligaId?: string): Promise<CromoMazo[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("fn_mi_mazo", {
+    p_liga_id: ligaId,
+  });
+
+  if (error || !data) return [];
+  return (data as CromoMazo[]).map((cromo) => ({
+    ...cromo,
+    precio: Number(cromo.precio),
+    cantidad: Number(cromo.cantidad),
+  }));
+}
+
+/** Cromos de la jornada en los que el usuario está implicado. */
+export async function getCromosJornada(
+  ligaId?: string,
+  jornada = 1,
+): Promise<CromoEnJuego[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("fn_mis_cromos_jornada", {
+    p_liga_id: ligaId,
+    p_jornada: jornada,
+  });
+
+  if (error || !data) return [];
+  return data as CromoEnJuego[];
+}
+
+/** Monedas del usuario en esa liga. */
+export async function getSaldoLiga(ligaId?: string): Promise<number> {
+  if (!ligaId) return 0;
+
+  const supabase = await createServerClient();
+  if (!supabase) return 0;
+
+  const { data, error } = await supabase.rpc("fn_saldo_liga", {
+    p_liga_id: ligaId,
+  });
+
+  if (error) return 0;
+  const saldo = Number(data);
+  return Number.isFinite(saldo) ? saldo : 0;
+}
+
+/** Últimos movimientos de monedas del usuario en esa liga. */
+export async function getMisMovimientos(
+  ligaId?: string,
+  limite = 12,
+): Promise<MovimientoMonedas[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("fn_mis_movimientos", {
+    p_liga_id: ligaId,
+    p_limite: limite,
+  });
+
+  if (error || !data) return [];
+  return (data as MovimientoMonedas[]).map((movimiento) => ({
+    ...movimiento,
+    cantidad: Number(movimiento.cantidad),
+    saldo: Number(movimiento.saldo),
+  }));
 }
 
 export function formatFecha(iso: string): string {

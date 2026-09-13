@@ -41,12 +41,18 @@ export function TeletextHeader({
 }
 
 type NavProps = {
-  active: "inicio" | "jornada" | "admin" | "cuenta";
+  active: "inicio" | "jornada" | "cromos" | "admin" | "cuenta";
   slug: string;
   showAdmin?: boolean;
+  showCromos?: boolean;
 };
 
-export function TeletextNav({ active, slug, showAdmin = false }: NavProps) {
+export function TeletextNav({
+  active,
+  slug,
+  showAdmin = false,
+  showCromos = false,
+}: NavProps) {
   const base = `/s/${slug}`;
   return (
     <nav className="tve-nav" aria-label="Principal">
@@ -64,6 +70,15 @@ export function TeletextNav({ active, slug, showAdmin = false }: NavProps) {
         <span className="tve-nav-key tve-block--green" />
         <span className="tve-nav-text">Jornada</span>
       </Link>
+      {showCromos && (
+        <Link
+          href={`${base}/cromos`}
+          className={`tve-nav-item ${active === "cromos" ? "tve-nav-item--active" : ""}`}
+        >
+          <span className="tve-nav-key tve-block--yellow" />
+          <span className="tve-nav-text">Cromos</span>
+        </Link>
+      )}
       {showAdmin && (
         <Link
           href={`${base}/admin`}
