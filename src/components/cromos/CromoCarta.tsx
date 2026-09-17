@@ -10,6 +10,7 @@ type Props = {
   tipo: TipoCromo;
   cantidad?: number;
   compact?: boolean;
+  relleno?: boolean;
 };
 
 export function CromoCarta({
@@ -18,6 +19,7 @@ export function CromoCarta({
   tipo,
   cantidad,
   compact = false,
+  relleno = false,
 }: Props) {
   const [sinImagen, setSinImagen] = useState(false);
   const esAtaque = tipo === "ataque";
@@ -31,7 +33,7 @@ export function CromoCarta({
 
   return (
     <div
-      className={`tve-carta ${esAtaque ? "tve-carta--ataque" : "tve-carta--bonus"}${compact ? " tve-carta--compact" : ""}${conArte ? " tve-carta--arte" : ""}`}
+      className={`tve-carta ${esAtaque ? "tve-carta--ataque" : "tve-carta--bonus"}${compact ? " tve-carta--compact" : ""}${conArte ? " tve-carta--arte" : ""}${relleno ? " tve-carta--relleno" : ""}`}
     >
       {!sinImagen && (
         // eslint-disable-next-line @next/next/no-img-element

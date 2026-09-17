@@ -6,7 +6,6 @@ type HeaderProps = {
   jornada?: number;
   fecha?: string;
   pagina?: string;
-  /** Etiqueta de modo (ej. PORRA CLASICA / MAZO Y GOL) */
   modo?: string;
 };
 

@@ -1,4 +1,3 @@
-/** Fecha estilo teletexto TVE: 15/AGO/2026 */
 export function formatFechaTeletext(iso: string): string {
   const meses = [
     "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
@@ -10,7 +9,6 @@ export function formatFechaTeletext(iso: string): string {
   return `${dia}/${mes}/${d.getFullYear()}`;
 }
 
-/** Código día estilo S-15 / D-16 / M-18 */
 export function formatDiaCodigo(iso: string): string {
   const d = new Date(iso);
   const pref =

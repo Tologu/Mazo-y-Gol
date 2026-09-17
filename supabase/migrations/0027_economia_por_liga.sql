@@ -1,14 +1,4 @@
--- =====================================================================
--- 0027_economia_por_liga.sql
--- La economía (monedas + inventario de cromos) pasa de ser global por
--- usuario a estar acotada a cada servidor/liga.
---
--- Motivo: un servidor es una porra privada e independiente. Gastar un
--- cromo en la liga A no debe vaciar el mazo de la liga B.
---
--- La wallet vive en liga_participantes (ya es la tabla puente usuario-liga).
--- perfiles.monedas queda como saldo heredado, sin uso en el juego.
--- =====================================================================
+-- 0027: monedas e inventario por liga (no globales)
 
 -- ---------------------------------------------------------------------
 -- WALLET POR LIGA

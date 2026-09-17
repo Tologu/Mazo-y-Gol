@@ -51,6 +51,14 @@ a {
   padding: 0 6px;
 }
 
+.tve-login-diario {
+  max-width: min(480px, 100%);
+  margin: 8px auto 0;
+  padding: 0 6px;
+  font-size: 20px;
+  text-align: center;
+}
+
 .tve-screen {
   min-height: 100dvh;
   background-color: #000000;
@@ -513,49 +521,8 @@ a {
   font-weight: bold;
 }
 
-.tve-bars {
-  padding: 6px 4px;
-  box-shadow: inset 0 2px 0 #000033;
-}
-
-.tve-bar-line {
-  display: grid;
-  grid-template-columns: 88px 1fr auto;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 4px;
-  font-size: 18px;
-}
-
-.tve-bar-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #ffffff;
-}
-
-.tve-bar-graph {
-  letter-spacing: -1px;
-  font-size: 16px;
-  overflow: hidden;
-  color: #00ff00;
-}
-
-.tve-bar-val {
-  min-width: 24px;
-  text-align: right;
-  color: #ffff00;
-}
-
 .tve-footer {
   margin-top: 8px;
-}
-
-.tve-demo {
-  color: #ffff00;
-  font-size: 16px;
-  margin: 0 0 4px;
-  padding: 0 4px;
 }
 
 .tve-footer-bar {
@@ -1545,7 +1512,8 @@ a {
 /* --- Cromos ------------------------------------------------------- */
 
 .tve-mano {
-  --mano-flotante-scale: 2.55;
+  --mano-ancho-slot: 88px;
+  --mano-ancho-flotante: min(78vw, 280px);
   overflow: hidden;
   padding: 8px 6px 4px;
 }
@@ -1554,6 +1522,7 @@ a {
   overflow: visible;
   position: relative;
   z-index: 40;
+  padding-bottom: 12px;
 }
 
 .tve-mano-stage {
@@ -1567,27 +1536,36 @@ a {
 
 .tve-mano--flotante .tve-mano-stage {
   overflow: visible;
+  height: calc(var(--mano-ancho-flotante) * 4 / 3 + 40px);
 }
 
 .tve-mano-slot {
   position: absolute;
   left: 50%;
   top: 8px;
-  width: 88px;
-  margin-left: -44px;
+  width: var(--mano-ancho-slot);
+  margin-left: calc(var(--mano-ancho-slot) / -2);
   padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
   font: inherit;
   transform-style: preserve-3d;
+  transform-origin: center center;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: manipulation;
   transition:
     transform 220ms linear,
-    opacity 220ms linear;
+    opacity 220ms linear,
+    width 220ms linear,
+    margin 220ms linear;
+}
+
+.tve-mano-slot--flotante {
+  width: var(--mano-ancho-flotante);
+  margin-left: calc(var(--mano-ancho-flotante) / -2);
 }
 
 .tve-mano-nav {
@@ -1619,6 +1597,12 @@ a {
   background-color: transparent;
 }
 
+.tve-carta--arte .tve-carta-img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
 .tve-carta-img {
   display: block;
   width: 100%;
@@ -1627,6 +1611,19 @@ a {
   object-position: center;
   pointer-events: none;
   -webkit-user-drag: none;
+}
+
+.tve-carta--relleno {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.tve-carta--relleno .tve-carta-img {
+  object-fit: cover;
+}
+
+.tve-carta--relleno .tve-carta-fallback {
+  height: 100%;
 }
 
 .tve-carta-stock {
@@ -1700,6 +1697,71 @@ a {
   gap: 8px;
   align-items: center;
   padding: 8px 6px;
+}
+
+.tve-tienda-banner {
+  margin: 0;
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 6px;
+  color: #0000ff;
+  background-color: #ffff00;
+  box-shadow: 4px 4px 0 #0000ff;
+}
+
+.tve-tienda {
+  padding: 4px 6px 12px;
+}
+
+.tve-tienda-sub {
+  margin: 8px 0 10px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.tve-tienda-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.tve-tienda-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tve-tienda-marco {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: #000000;
+  border: 2px solid #ffff00;
+  box-shadow: 2px 2px 0 #666600;
+}
+
+.tve-tienda-marco .tve-carta {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: none;
+  box-shadow: none;
+}
+
+.tve-tienda-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 4px 2px;
+  font-size: 15px;
+  line-height: 1.15;
+  white-space: normal;
 }
 
 .tve-cromo-list {
@@ -1806,7 +1868,8 @@ a {
 
 @media (min-width: 768px) {
   .tve-mano {
-    --mano-flotante-scale: 2.2;
+    --mano-ancho-slot: 120px;
+    --mano-ancho-flotante: 320px;
   }
 
   .tve-mano-stage {
@@ -1814,9 +1877,8 @@ a {
     height: 228px;
   }
 
-  .tve-mano-slot {
-    width: 120px;
-    margin-left: -60px;
+  .tve-mano--flotante .tve-mano-stage {
+    height: calc(var(--mano-ancho-flotante) * 4 / 3 + 48px);
   }
 
   .tve-carta-fallback-nombre,
@@ -1857,6 +1919,15 @@ a {
 
   .tve-cromo-desc {
     flex: 1 1 100%;
+  }
+
+  .tve-tienda-banner {
+    font-size: 44px;
+    letter-spacing: 8px;
+  }
+
+  .tve-tienda-btn {
+    font-size: 18px;
   }
 }
 

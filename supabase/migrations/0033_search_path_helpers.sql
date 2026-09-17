@@ -1,9 +1,4 @@
--- =====================================================================
--- 0033_search_path_helpers.sql
--- Las dos funciones constantes de 0028 y 0031 se crearon sin search_path
--- fijo y el linter de Supabase las marca. No tocan tablas, así que es
--- higiene, pero conviene dejarlas igual que el resto.
--- =====================================================================
+-- 0033: search_path en fn_monedas_bienvenida y fn_premio_por_acierto
 
 create or replace function public.fn_monedas_bienvenida()
 returns bigint

@@ -4,11 +4,6 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type ActualizarNombreResult = { ok: true } | { ok: false; error: string };
 
-/**
- * Cambia el nombre visible en la clasificación.
- * Actualiza Auth metadata y perfiles a la vez: el layout sincroniza
- * perfiles desde Auth, así que ambos deben quedar iguales.
- */
 export async function actualizarNombreClient(
   nombre: string,
 ): Promise<ActualizarNombreResult> {

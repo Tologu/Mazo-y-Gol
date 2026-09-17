@@ -24,6 +24,12 @@ function mapRpcError(error: { message?: string; code?: string } | null): string 
   if (msg.includes("sin_plantilla")) {
     return "Falta la plantilla de calendario en Supabase.";
   }
+  if (msg.includes("ya_es_mazo_y_gol")) {
+    return "Este servidor ya es Mazo y Gol.";
+  }
+  if (msg.includes("no_owner")) {
+    return "Solo el dueño del servidor puede hacer esto.";
+  }
   return msg || "No se pudo completar la operación.";
 }
 
@@ -89,4 +95,23 @@ export async function setLigaActivaClient(
   }
 
   return { ok: true, slug };
+}
+
+export async function activarMazoYGolClient(
+  ligaId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = createBrowserSupabaseClient();
+  if (!supabase) {
+    return { ok: false, error: "Supabase no configurado." };
+  }
+
+  const { error } = await supabase.rpc("activar_mazo_y_gol", {
+    p_liga_id: ligaId,
+  });
+
+  if (error) {
+    return { ok: false, error: mapRpcError(error) };
+  }
+
+  return { ok: true };
 }

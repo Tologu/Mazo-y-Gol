@@ -1,12 +1,4 @@
--- =====================================================================
--- 0031_premios_monedas.sql
--- Los aciertos dan monedas para poder comprar cromos en la tienda.
---
--- Se premia al escrutar cada partido. Como el escrutinio puede repetirse
--- (registrar_resultado, reiniciar_resultados_jornada), primero se
--- revierten los premios anteriores de ese partido y luego se reparten
--- de nuevo. Así el saldo no se infla al recalcular.
--- =====================================================================
+-- 0031: monedas por acierto al escrutar (se recalcula si se vuelve a escrutar)
 
 create or replace function public.fn_premio_por_acierto(
   p_exacto boolean,

@@ -18,7 +18,6 @@ export async function listMisServidores(): Promise<ServidorResumen[]> {
   }));
 }
 
-/** Tras login siempre a la pestaña Servidores (elegir, crear o unirse). */
 export async function resolvePostLoginPath(): Promise<string> {
   return "/servidores";
 }

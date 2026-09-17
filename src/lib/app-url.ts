@@ -1,6 +1,5 @@
 const DEFAULT_APP_URL = "http://localhost:3000";
 
-/** Convierte 0.0.0.0 → localhost (0.0.0.0 no abre en el navegador). */
 export function normalizeAppOrigin(origin: string): string {
   try {
     const url = new URL(origin);
@@ -13,7 +12,6 @@ export function normalizeAppOrigin(origin: string): string {
   }
 }
 
-/** Origen para redirectTo / emailRedirectTo en el cliente. */
 export function getBrowserOrigin(): string {
   if (typeof window === "undefined") {
     return process.env.NEXT_PUBLIC_APP_URL ?? DEFAULT_APP_URL;

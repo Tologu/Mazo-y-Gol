@@ -1,22 +1,6 @@
--- =====================================================================
--- 0029_escrutinio_cromos.sql
--- Escrutinio v2: puntos_finales deja de ser una copia de puntos_base y
--- pasa a incorporar los cromos jugados sobre el partido.
---
--- Orden de resolución:
---   A) Los ataques 'cancelar_bonificacion' (Tijeras) anulan las
---      bonificaciones que el objetivo tenga equipadas en ese partido.
---   B) Se aplican las bonificaciones propias que sigan vivas.
---   C) Se aplican los ataques recibidos.
---
--- El proceso es IDEMPOTENTE: al escrutar se resetea el estado de los
--- cromos del partido y se recalcula todo desde cero, porque escrutar
--- puede repetirse (registrar_resultado, reiniciar_resultados_jornada).
---
--- NOTA sobre puntos negativos: 'restar_si_falla' solo entra cuando el
--- jugador ha fallado (0 puntos base), así que si se truncase a 0 la
--- carta no haría nada nunca. Por eso puntos_finales admite negativos.
--- =====================================================================
+-- 0029: el escrutinio aplica cromos sobre puntos_finales
+-- tijeras primero, luego bonus, luego ataques.
+-- Autobús puede dejar puntos negativos (si no, no haría nada).
 
 
 -- ---------------------------------------------------------------------

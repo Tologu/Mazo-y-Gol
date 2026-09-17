@@ -1,4 +1,3 @@
-/** Duración máxima de sesión desde el último login. */
 export const SESSION_MAX_AGE_MS = 8 * 60 * 60 * 1000;
 
 export function sessionHasExpired(

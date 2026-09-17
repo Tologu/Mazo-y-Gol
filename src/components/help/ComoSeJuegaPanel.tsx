@@ -1,4 +1,3 @@
-/** Instrucciones de juego visibles en la pantalla de acceso. */
 export function ComoSeJuegaPanel() {
   return (
     <details className="tve-help intro-help">
@@ -39,12 +38,15 @@ export function ComoSeJuegaPanel() {
             <span className="tve-green">Cromos</span> juegas cartas sobre un
             partido antes de que cierre.{" "}
             <span className="tve-green">Bonificaciones</span> sobre tus puntos y{" "}
-            <span className="tve-red">ataques</span> contra un rival que vaya
-            hasta 3 puestos por encima de ti.
+            <span className="tve-red">ataques</span> primero contra un rival
+            y después sobre uno de sus pronósticos aún abiertos. Cada jugador
+            solo puede recibir un ataque por jornada.
           </li>
           <li>
-            Los aciertos dan <span className="tve-yellow">monedas</span> (10 por
-            exacto, 4 por signo) y con ellas compras más cromos.
+            Los aciertos dan <span className="tve-yellow">monedas</span> (50 por
+            exacto, 20 por signo). En Mazo y Gol, al entrar al servidor cobras
+            15 monedas una vez al día. Con ellas compras cromos en una tienda
+            de 3 cartas distinta para cada jugador, que cambia a las 00:00.
           </li>
         </ol>
         <p className="tve-help-note tve-yellow">

@@ -1,18 +1,6 @@
--- =====================================================================
--- 0028_catalogo_y_reparto.sql
--- Catálogo inicial de cromos y reparto del mazo de salida al entrar
--- en un servidor Mazo y Gol.
---
--- El catálogo es global (tabla cromos no tiene liga_id); lo que es por
--- liga es el inventario, que se rellena aquí.
--- =====================================================================
+-- 0028: catálogo de cromos y mazo inicial al unirse
 
--- ---------------------------------------------------------------------
--- CATÁLOGO
--- 'codigo' es la clave estable: permite re-ejecutar esta migración y
--- ajustar textos/precios sin duplicar cartas ni romper inventarios.
--- Los 'kind' del JSONB los interpreta el escrutinio (0029).
--- ---------------------------------------------------------------------
+-- on conflict (codigo) para poder retocar textos/precios
 insert into public.cromos (
   codigo, nombre, descripcion, tipo, rareza, efecto,
   requiere_partido, precio_monedas, comprable

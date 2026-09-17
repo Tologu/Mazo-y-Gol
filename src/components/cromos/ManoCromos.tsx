@@ -94,7 +94,6 @@ export function ManoCromos({ cromos, activeIndex, onChange }: Props) {
                       "rotateY(0deg)",
                       "translateZ(80px)",
                       "translateY(-18px)",
-                      "scale(var(--mano-flotante-scale))",
                     ].join(" ")
                   : [
                       `translateX(calc(${offset} * var(--mano-step)))`,

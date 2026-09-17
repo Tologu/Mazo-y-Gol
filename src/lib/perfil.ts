@@ -8,7 +8,6 @@ function nombreDesdeMetadata(user: User): string | null {
   return nombreMeta || null;
 }
 
-/** Sincroniza perfiles.nombre con el metadata de Auth (campo nombre). */
 export async function syncPerfilDesdeAuth(): Promise<void> {
   const supabase = await createServerClient();
   if (!supabase) return;

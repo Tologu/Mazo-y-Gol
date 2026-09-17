@@ -1,11 +1,4 @@
--- =====================================================================
--- 0030_tienda_cromos.sql
--- Compra de cromos con las monedas del servidor.
---
--- El ledger (transacciones_monedas) queda como registro fiel de todo
--- movimiento: desde 0027 el saldo real es liga_participantes.monedas y
--- desde 0028 el alta en un servidor deja su fila 'bienvenida'.
--- =====================================================================
+-- 0030: comprar cromos con las monedas del servidor
 
 create or replace function public.comprar_cromo(
   p_cromo_id uuid,

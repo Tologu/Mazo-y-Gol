@@ -1,4 +1,57 @@
--- 0034: usar_cromo petaba en bonus porque v_chk no se asignaba
+-- 0041: ataques a cualquiera; un jugador solo recibe 1 ataque por jornada
+
+delete from public.cromos_aplicados ca
+ where ca.tipo = 'ataque'
+   and ca.estado in ('activo', 'resuelto', 'anulado')
+   and ca.objetivo_user_id is not null
+   and ca.id not in (
+     select kept.id
+       from (
+         select distinct on (jornada_id, objetivo_user_id) id
+           from public.cromos_aplicados
+          where tipo = 'ataque'
+            and estado in ('activo', 'resuelto', 'anulado')
+            and objetivo_user_id is not null
+          order by jornada_id, objetivo_user_id, created_at
+       ) kept
+   );
+
+create unique index if not exists uq_un_ataque_recibido_jornada
+  on public.cromos_aplicados (jornada_id, objetivo_user_id)
+  where tipo = 'ataque'
+    and objetivo_user_id is not null
+    and estado in ('activo', 'resuelto', 'anulado');
+
+create or replace function public.fn_ya_atacados_jornada(
+  p_liga_id uuid,
+  p_jornada int
+)
+returns table (user_id uuid)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select distinct ca.objetivo_user_id
+    from public.cromos_aplicados ca
+    join public.jornadas j on j.id = ca.jornada_id
+   where j.liga_id = p_liga_id
+     and j.numero = p_jornada
+     and ca.tipo = 'ataque'
+     and ca.estado in ('activo', 'resuelto', 'anulado')
+     and ca.objetivo_user_id is not null
+     and exists (
+       select 1 from public.liga_participantes lp
+        where lp.liga_id = p_liga_id
+          and lp.user_id = auth.uid()
+     );
+$$;
+
+comment on function public.fn_ya_atacados_jornada(uuid, int) is
+  'Jugadores que ya han recibido un ataque (activo, resuelto o anulado) en esa jornada.';
+
+revoke execute on function public.fn_ya_atacados_jornada(uuid, int) from public, anon;
+grant execute on function public.fn_ya_atacados_jornada(uuid, int) to authenticated;
 
 create or replace function public.usar_cromo(
   p_cromo_id          uuid,
@@ -19,9 +72,9 @@ declare
   v_modo           text;
   v_stock          int;
   v_aplicado       public.cromos_aplicados%rowtype;
-  v_chk            record;
   v_rango_emisor   int;
   v_rango_objetivo int;
+  v_constraint     text;
 begin
   if v_emisor is null then
     raise exception 'No autenticado' using errcode = 'PT401';
@@ -89,6 +142,11 @@ begin
         using errcode = 'PT400', detail = 'ataque_sin_objetivo';
     end if;
 
+    if p_objetivo_user_id = v_emisor then
+      raise exception 'No puedes atacarte a ti mismo'
+        using errcode = 'PT403', detail = 'no_puedes_atacarte';
+    end if;
+
     if not exists (
       select 1
       from public.liga_participantes lp
@@ -99,16 +157,17 @@ begin
         using errcode = 'PT403', detail = 'objetivo_no_inscrito';
     end if;
 
-    select * into v_chk
-      from public.fn_ataque_permitido(v_liga_id, v_emisor, p_objetivo_user_id);
-
-    if not v_chk.permitido then
-      raise exception 'Ataque no permitido: %', v_chk.motivo
-        using errcode = 'PT403', detail = v_chk.motivo;
+    if exists (
+      select 1
+        from public.cromos_aplicados ca
+       where ca.jornada_id = v_jornada.id
+         and ca.objetivo_user_id = p_objetivo_user_id
+         and ca.tipo = 'ataque'
+         and ca.estado in ('activo', 'resuelto', 'anulado')
+    ) then
+      raise exception 'Ese jugador ya ha recibido un ataque esta jornada'
+        using errcode = 'PT403', detail = 'ya_recibio_ataque';
     end if;
-
-    v_rango_emisor   := v_chk.rango_atacante;
-    v_rango_objetivo := v_chk.rango_objetivo;
   end if;
 
   select cantidad into v_stock
@@ -145,10 +204,19 @@ begin
   returning * into v_aplicado;
 
   return v_aplicado;
+exception
+  when unique_violation then
+    get stacked diagnostics v_constraint = constraint_name;
+    if v_constraint = 'uq_un_ataque_recibido_jornada' then
+      raise exception 'Ese jugador ya ha recibido un ataque esta jornada'
+        using errcode = 'PT403', detail = 'ya_recibio_ataque';
+    end if;
+    raise;
 end;
 $$;
 
 comment on function public.usar_cromo(uuid, uuid, uuid) is
-  'Aplica un cromo del inventario de esa liga. Suspendidos siguen abiertos; finalizados o con marcador, no.';
+  'Aplica un cromo. Ataques: cualquier rival de la liga, un solo ataque recibido por jornada.';
 
+revoke execute on function public.usar_cromo(uuid, uuid, uuid) from public, anon;
 grant execute on function public.usar_cromo(uuid, uuid, uuid) to authenticated;

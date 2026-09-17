@@ -4,14 +4,12 @@ export type PartidoCalendario = {
   local: string;
   visitante: string;
   fecha_inicio: string;
-  /** Cierre de la jornada anterior. Null = jornada 1 (sin espera). */
   fecha_apertura: string | null;
   goles_local: number | null;
   goles_visitante: number | null;
   partido_estado: string;
   bloqueado: boolean;
   abierta: boolean;
-  /** True si el admin abrió esta jornada a mano (sin abrir las anteriores). */
   apertura_forzada?: boolean;
 };
 
@@ -42,7 +40,6 @@ export type FilaEquipo = {
   puntos: number;
 };
 
-/** Traza de un cromo que intervino en la puntuación de un partido. */
 export type CromoAplicadoTraza = {
   codigo: string;
   nombre: string;
@@ -56,16 +53,8 @@ export type PronosticoAjeno = {
   visitante: string;
   goles_local: number;
   goles_visitante: number;
-  /** Puntos ya escrutados (con cromos). Null si el partido no se ha escrutado. */
   puntos_finales: number | null;
   cromos: CromoAplicadoTraza[];
-};
-
-export type StatsJornada = {
-  jornada: number;
-  partidos: number;
-  jugados: number;
-  pendientes: number;
 };
 
 export type ModoJuego = "clasica" | "mazo_y_gol";
@@ -108,14 +97,12 @@ export type TipoCromo = "bonificacion" | "ataque";
 
 export type RarezaCromo = "comun" | "rara" | "epica" | "legendaria";
 
-/** Config declarativa del efecto; la interpreta el escrutinio en SQL. */
 export type EfectoCromo = {
   kind: string;
   factor?: number;
   puntos?: number;
 };
 
-/** Fila de `fn_mi_mazo`: catálogo con lo que tiene el usuario en esa liga. */
 export type CromoMazo = {
   cromo_id: string;
   codigo: string;
@@ -128,7 +115,6 @@ export type CromoMazo = {
   cantidad: number;
 };
 
-/** Fila de `fn_mis_movimientos`: historial de monedas en la liga. */
 export type MovimientoMonedas = {
   movimiento_id: string;
   tipo: string;
@@ -138,7 +124,6 @@ export type MovimientoMonedas = {
   created_at: string;
 };
 
-/** Fila de `fn_mis_cromos_jornada`: cromos ya jugados de esta jornada. */
 export type CromoEnJuego = {
   aplicado_id: string;
   cromo_codigo: string;

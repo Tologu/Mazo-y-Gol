@@ -174,8 +174,6 @@ export function StandingsTable({ filas, ligaId, jornada, partidos }: Props) {
                               : resultado?.tipo === "fallo"
                                 ? " tve-pron-item--fallo"
                                 : "";
-                        // Los puntos escrutados ya llevan los cromos; el
-                        // cálculo local solo cubre partidos sin escrutar.
                         const puntos = p.puntos_finales ?? resultado?.puntos;
                         const cromos = p.cromos ?? [];
                         return (

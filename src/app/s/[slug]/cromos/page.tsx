@@ -7,6 +7,7 @@ import {
 import { JornadaSelector } from "@/components/teletext/JornadaSelector";
 import { CromosEnJuegoPanel } from "@/components/cromos/CromosEnJuegoPanel";
 import { MiMazoPanel } from "@/components/cromos/MiMazoPanel";
+import { TiendaCromos } from "@/components/cromos/TiendaCromos";
 import { getSessionUser } from "@/lib/auth";
 import {
   getClasificacion,
@@ -15,7 +16,9 @@ import {
   getMisMovimientos,
   getPartidosJornada,
   getSaldoLiga,
+  getTiendaHoy,
   getUltimaJornadaCerrada,
+  getYaAtacadosJornada,
 } from "@/lib/data";
 import { formatFechaTeletext } from "@/lib/teletext-format";
 import { TOTAL_JORNADAS, parseJornadaParam } from "@/lib/jornadas";
@@ -38,7 +41,6 @@ export default async function CromosPage({
   const liga = await getLigaBySlug(slug);
   if (!liga) redirect("/");
 
-  // Los cromos solo existen en Mazo y Gol; en Clásica la pestaña ni aparece.
   if (liga.modo_juego !== "mazo_y_gol") {
     redirect(`/s/${slug}/clasificacion`);
   }
@@ -51,14 +53,16 @@ export default async function CromosPage({
   const jornada =
     parseJornadaParam(jornadaParam) ?? (await getUltimaJornadaCerrada(liga.id));
 
-  const [partidos, mazo, enJuego, filas, saldo, movimientos] =
+  const [partidos, mazo, tienda, enJuego, filas, saldo, movimientos, yaAtacados] =
     await Promise.all([
       getPartidosJornada(jornada, liga.id),
       getMiMazo(liga.id),
+      getTiendaHoy(liga.id),
       getCromosJornada(liga.id, jornada),
       getClasificacion(liga.id),
       getSaldoLiga(liga.id),
       getMisMovimientos(liga.id),
+      getYaAtacadosJornada(liga.id, jornada),
     ]);
 
   return (
@@ -80,9 +84,17 @@ export default async function CromosPage({
                   selector de abajo.
                 </li>
                 <li>
-                  <span className="tve-yellow">Elige cromo</span> y el{" "}
-                  <span className="tve-green">partido</span> o el{" "}
-                  <span className="tve-red">rival</span> al que aplicarlo.
+                  <span className="tve-yellow">Bonificación:</span> elige el
+                  partido. <span className="tve-red">Ataque:</span> primero el
+                  rival y luego el pronóstico que tenga en un partido aún
+                  abierto. Cada jugador solo puede recibir un ataque por
+                  jornada.
+                </li>
+                <li>
+                  <span className="tve-yellow">Monedas:</span> 50 por exacto, 20
+                  por signo. Al entrar al servidor cobras 15 una vez al día. La
+                  tienda enseña 3 cartas distintas para cada jugador y cambia a
+                  las 00:00.
                 </li>
               </ol>
             </div>
@@ -98,12 +110,19 @@ export default async function CromosPage({
             />
             <MiMazoPanel
               ligaId={liga.id}
-              saldo={saldo}
+              jornada={jornada}
               mazo={mazo}
               partidos={partidos}
               filas={filas}
               userId={user.id}
+              yaAtacados={yaAtacados}
             />
+          </section>
+
+          <section className="tve-section tve-section--sub tve-section--tienda">
+            <h2 className="tve-tienda-banner">TIENDA</h2>
+            <TeletextColHead izq="Oferta de hoy" der="cambia 00:00" />
+            <TiendaCromos ligaId={liga.id} saldo={saldo} tienda={tienda} />
           </section>
 
           <section className="tve-section tve-section--sub">

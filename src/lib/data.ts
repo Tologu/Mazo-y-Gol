@@ -32,10 +32,6 @@ export async function getPartidosJornada(
   return data as PartidoCalendario[];
 }
 
-/**
- * Última jornada cuyos pronósticos ya están cerrados (time-lock).
- * Si aún no ha cerrado ninguna, devuelve 1.
- */
 export async function getUltimaJornadaCerrada(ligaId?: string): Promise<number> {
   if (!ligaId) return 1;
 
@@ -86,7 +82,6 @@ export async function getClasificacion(
   return data as FilaClasificacion[];
 }
 
-/** Clasificación de equipos calculada con los resultados oficiales registrados. */
 export async function getClasificacionEquipos(
   ligaId?: string,
 ): Promise<FilaEquipo[]> {
@@ -184,10 +179,6 @@ export async function getMisPronosticosJornada(
   return data as PronosticoPropio[];
 }
 
-/**
- * Catálogo de cromos con la cantidad que tiene el usuario en esa liga.
- * `precio` viene de un bigint, que PostgREST puede serializar como texto.
- */
 export async function getMiMazo(ligaId?: string): Promise<CromoMazo[]> {
   if (!ligaId) return [];
 
@@ -206,7 +197,24 @@ export async function getMiMazo(ligaId?: string): Promise<CromoMazo[]> {
   }));
 }
 
-/** Cromos de la jornada en los que el usuario está implicado. */
+export async function getTiendaHoy(ligaId?: string): Promise<CromoMazo[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("fn_cromos_tienda_hoy", {
+    p_liga_id: ligaId,
+  });
+
+  if (error || !data) return [];
+  return (data as CromoMazo[]).map((cromo) => ({
+    ...cromo,
+    precio: Number(cromo.precio),
+    cantidad: Number(cromo.cantidad),
+  }));
+}
+
 export async function getCromosJornada(
   ligaId?: string,
   jornada = 1,
@@ -225,7 +233,45 @@ export async function getCromosJornada(
   return data as CromoEnJuego[];
 }
 
-/** Monedas del usuario en esa liga. */
+export async function getYaAtacadosJornada(
+  ligaId?: string,
+  jornada = 1,
+): Promise<string[]> {
+  if (!ligaId) return [];
+
+  const supabase = await createServerClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("fn_ya_atacados_jornada", {
+    p_liga_id: ligaId,
+    p_jornada: jornada,
+  });
+
+  if (error || !data) return [];
+  return (data as { user_id: string }[]).map((row) => row.user_id);
+}
+
+export async function reclamarLoginDiario(
+  ligaId: string,
+): Promise<{ concedido: boolean; cantidad: number }> {
+  const supabase = await createServerClient();
+  if (!supabase) return { concedido: false, cantidad: 0 };
+
+  const { data, error } = await supabase.rpc("reclamar_login_diario", {
+    p_liga_id: ligaId,
+  });
+
+  if (error || !data || typeof data !== "object") {
+    return { concedido: false, cantidad: 0 };
+  }
+
+  const row = data as { concedido?: boolean; cantidad?: number };
+  return {
+    concedido: Boolean(row.concedido),
+    cantidad: Number(row.cantidad) || 0,
+  };
+}
+
 export async function getSaldoLiga(ligaId?: string): Promise<number> {
   if (!ligaId) return 0;
 
@@ -241,7 +287,6 @@ export async function getSaldoLiga(ligaId?: string): Promise<number> {
   return Number.isFinite(saldo) ? saldo : 0;
 }
 
-/** Últimos movimientos de monedas del usuario en esa liga. */
 export async function getMisMovimientos(
   ligaId?: string,
   limite = 12,

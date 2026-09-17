@@ -1,5 +1,3 @@
-/** Puntuación de porra: exacto = 5, solo signo 1X2 = 2, fallo = 0. */
-
 export type TipoAcierto = "exacto" | "signo" | "fallo";
 
 export type ResultadoPuntos = {

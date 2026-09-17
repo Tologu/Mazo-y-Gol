@@ -1,12 +1,10 @@
-/** Margen canónico (fn_margen_timelock en Supabase). */
+// mismo margen que fn_margen_timelock
 export const TIMELOCK_MARGIN_MS = 5 * 60 * 1000;
 
-/** Instantánea en ms en la que se bloquean los pronósticos de la jornada. */
 export function pronosticosCierranEn(fechaInicioIso: string): number {
   return new Date(fechaInicioIso).getTime() - TIMELOCK_MARGIN_MS;
 }
 
-/** Instantánea en ms en la que se abre la jornada (cierre de la anterior). */
 export function pronosticosAbrenEn(fechaAperturaIso: string): number {
   return pronosticosCierranEn(fechaAperturaIso);
 }
@@ -36,7 +34,6 @@ export function estadoVentanaPronosticos(
 
 export type CuentaAtrasPronosticos = {
   cerrado: boolean;
-  /** Texto tipo 2d 05:32:18 o 00:00:00 */
   restante: string;
 };
 

@@ -11,7 +11,8 @@ import {
   reiniciarResultadosJornadaClient,
   suspenderPartidoClient,
 } from "@/lib/simulacion-client";
-import type { BotJugador, PartidoCalendario } from "@/lib/types";
+import { activarMazoYGolClient } from "@/lib/servers-client";
+import type { BotJugador, ModoJuego, PartidoCalendario } from "@/lib/types";
 
 type Props = {
   ligaId: string;
@@ -20,6 +21,7 @@ type Props = {
   totalJornadas: number;
   bots: BotJugador[];
   partidos: PartidoCalendario[];
+  modoJuego: ModoJuego;
 };
 
 type Marcador = { local: string; visitante: string };
@@ -31,6 +33,7 @@ export function SimulacionPanel({
   totalJornadas,
   bots,
   partidos,
+  modoJuego,
 }: Props) {
   const router = useRouter();
 
@@ -164,6 +167,24 @@ export function SimulacionPanel({
     router.refresh();
   }
 
+  async function handleActivarMazoYGol() {
+    setMessage(null);
+    const ok = window.confirm(
+      "¿Pasar este servidor a Mazo y Gol? Los jugadores recibirán el mazo inicial y las monedas de bienvenida. No se puede volver a Porra Clásica.",
+    );
+    if (!ok) return;
+
+    setBusy("modo");
+    const res = await activarMazoYGolClient(ligaId);
+    setBusy(null);
+    if (!res.ok) {
+      setMessage(res.error);
+      return;
+    }
+    setMessage("Servidor pasado a Mazo y Gol. Ya puedes usar cromos y monedas.");
+    router.refresh();
+  }
+
   function setMarcador(partidoId: string, campo: keyof Marcador, valor: string) {
     setMarcadores((prev) => ({
       ...prev,
@@ -178,6 +199,25 @@ export function SimulacionPanel({
   return (
     <>
       {message && <p className="tve-empty tve-yellow">{message}</p>}
+
+      {modoJuego === "clasica" && (
+        <section className="tve-section">
+          <TeletextColHead izq="Modo de juego" der="Clásica" />
+          <p className="tve-empty tve-white">
+            Esta porra es Clásica. Puedes pasarla a{" "}
+            <span className="tve-cyan">Mazo y Gol</span>: cromos, monedas y
+            pestaña Cromos. Los puntos ya escrutados no se recalculan.
+          </p>
+          <button
+            type="button"
+            className="intro-btn intro-btn--create sim-btn"
+            onClick={handleActivarMazoYGol}
+            disabled={busy !== null}
+          >
+            {busy === "modo" ? "Activando..." : "Pasar a Mazo y Gol"}
+          </button>
+        </section>
+      )}
 
       <section className="tve-section">
         <TeletextColHead izq={`Bots (${bots.length})`} der="Simulación" />

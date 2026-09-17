@@ -22,11 +22,8 @@ function mapError(error: { message?: string; details?: string } | null): string 
   if (message.includes("jornada_no_abierta")) {
     return "Esta jornada se abre cuando cierre la anterior.";
   }
-  if (message.includes("fuera_de_rango_+3")) {
-    return "Solo puedes atacar a rivales hasta 3 posiciones por encima de ti.";
-  }
-  if (message.includes("objetivo_no_esta_por_encima")) {
-    return "Solo puedes atacar a quien va por delante de ti.";
+  if (message.includes("ya_recibio_ataque") || message.includes("uq_un_ataque_recibido_jornada")) {
+    return "Ese jugador ya ha recibido un ataque esta jornada.";
   }
   if (message.includes("no_puedes_atacarte")) {
     return "No puedes atacarte a ti mismo.";
@@ -49,8 +46,8 @@ function mapError(error: { message?: string; details?: string } | null): string 
   if (message.includes("saldo_insuficiente")) {
     return "No tienes monedas suficientes para esa carta.";
   }
-  if (message.includes("no_comprable")) {
-    return "Esa carta no está a la venta.";
+  if (message.includes("no_comprable") || message.includes("no_en_tienda_hoy")) {
+    return "Esa carta no está en tu tienda de hoy.";
   }
   if (message.includes("cromo_resuelto")) {
     return "Ese cromo ya se ha resuelto y no se puede retirar.";

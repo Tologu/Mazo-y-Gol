@@ -1,8 +1,4 @@
--- =====================================================================
--- 0035_clasificacion_puntos_finales.sql
--- La clasificación de la porra usaba puntos_base (5/2/0) y dejaba fuera
--- los cromos ya escrutados en puntos_finales (Doblete, Red de seguridad…).
--- =====================================================================
+-- 0035: ranking con puntos_finales (cromos incluidos)
 
 create or replace function public.fn_clasificacion_porra(p_liga_id uuid)
 returns table (

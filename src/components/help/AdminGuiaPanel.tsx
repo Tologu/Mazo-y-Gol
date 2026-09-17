@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-/** Guía para el dueño del servidor en la pestaña Admin. */
 export function AdminGuiaPanel() {
   const [abierta, setAbierta] = useState(false);
 
@@ -60,6 +59,12 @@ export function AdminGuiaPanel() {
             <li>
               Los <span className="tve-cyan">bots</span> son opcionales: sirven
               para simular jugadores y generar pronósticos de prueba.
+            </li>
+            <li>
+              Si el servidor es <span className="tve-yellow">Porra Clásica</span>
+              , puedes pasarlo a <span className="tve-cyan">Mazo y Gol</span>{" "}
+              con el botón de esta pestaña. Reparte mazo y monedas a quien ya
+              esté inscrito. No se puede volver atrás.
             </li>
             <li>
               <span className="tve-yellow">Servidores Mazo y Gol:</span> los

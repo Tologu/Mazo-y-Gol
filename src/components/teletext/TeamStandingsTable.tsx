@@ -4,7 +4,6 @@ type Props = {
   filas: FilaEquipo[];
 };
 
-/** Color de zona estilo teletexto TVE (Champions / Europa / descenso). */
 function tonoPosicion(posicion: number, total: number): string {
   if (posicion <= 4) return "tve-green";
   if (posicion <= 6) return "tve-yellow";
@@ -13,7 +12,6 @@ function tonoPosicion(posicion: number, total: number): string {
   return posicion % 2 === 0 ? "tve-row--cyan" : "tve-row--white";
 }
 
-/** Desplegable con la clasificación de equipos según resultados oficiales. */
 export function TeamStandingsTable({ filas }: Props) {
   return (
     <details className="tve-teams">

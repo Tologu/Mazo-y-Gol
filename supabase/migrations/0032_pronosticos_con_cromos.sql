@@ -1,12 +1,4 @@
--- =====================================================================
--- 0032_pronosticos_con_cromos.sql
--- El desglose de pronósticos de un jugador ahora devuelve también los
--- puntos ya escrutados y los cromos que intervinieron, para que la
--- clasificación pueda explicar de dónde salen los puntos.
---
--- La lógica de permisos es la de 0018: solo participantes, y hay que
--- tener la jornada completa para ver la de otros.
--- =====================================================================
+-- 0032: pronósticos ajenos con puntos_finales y cromos aplicados
 
 drop function if exists public.fn_pronosticos_jugador(uuid, int, uuid);
 

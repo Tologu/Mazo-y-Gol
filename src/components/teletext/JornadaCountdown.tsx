@@ -9,12 +9,9 @@ import { formatFechaTeletext } from "@/lib/teletext-format";
 import { AbrirPronosticosButton } from "@/components/teletext/AbrirPronosticosButton";
 
 type Props = {
-  /** fecha_inicio compartida de la jornada (ISO). */
   fechaInicio?: string;
-  /** Cierre de la jornada anterior (ISO). Null/undefined = jornada 1 o forzada. */
   fechaApertura?: string | null;
   jornada: number;
-  /** Solo el owner ve el botón de apertura manual. */
   esOwner?: boolean;
   ligaId?: string;
   aperturaForzada?: boolean;

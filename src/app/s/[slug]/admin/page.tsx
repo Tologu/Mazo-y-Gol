@@ -53,6 +53,7 @@ export default async function AdminPage({
             totalJornadas={TOTAL_JORNADAS}
             bots={bots}
             partidos={partidos}
+            modoJuego={liga.modo_juego}
           />
         </main>
         <TeletextFooter pagina="500" />
